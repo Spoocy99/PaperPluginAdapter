@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>dev.spoocy.adapter</groupId>
+        <artifactId>PaperAdapter</artifactId>
+        <version>1.0.12</version>
+    </parent>
+
+    <artifactId>plugin-adapter</artifactId>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>org.spigotmc</groupId>-->
+<!--            <artifactId>spigot</artifactId>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-plain</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-legacy</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.adapter</groupId>
+            <artifactId>compatibility</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.adapter</groupId>
+            <artifactId>message-wrapper</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.utils</groupId>
+            <artifactId>common-utils</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.utils</groupId>
+            <artifactId>config-utils</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.utils</groupId>
+            <artifactId>reflection-utils</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.utils</groupId>
+            <artifactId>bukkit-utils</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.utils</groupId>
+            <artifactId>security-utils</artifactId>
+        </dependency>
+
+    </dependencies>
+
+
+</project>

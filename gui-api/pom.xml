@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>dev.spoocy.adapter</groupId>
+        <artifactId>PaperAdapter</artifactId>
+        <version>1.0.12</version>
+    </parent>
+
+    <artifactId>gui-api</artifactId>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.adapter</groupId>
+            <artifactId>plugin-adapter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.adapter</groupId>
+            <artifactId>compatibility</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.utils</groupId>
+            <artifactId>common-utils</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>
