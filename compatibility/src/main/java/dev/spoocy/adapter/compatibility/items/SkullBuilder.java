@@ -53,7 +53,10 @@ public interface SkullBuilder extends ItemBuilder {
     @NotNull SkullBuilder amount(int amount);
 
     @Override
-    @NotNull SkullBuilder durability(short durability);
+    @NotNull SkullBuilder damage(int damage);
+
+    @Override
+    @NotNull SkullBuilder maxDamage(int maxDamage);
 
     @Override
     @NotNull SkullBuilder dyeColor(@NotNull DyeColor color);

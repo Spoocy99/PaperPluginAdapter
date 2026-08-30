@@ -141,8 +141,8 @@ public abstract class WrappedSkullBuilder implements SkullBuilder {
     }
 
     @Override
-    public short getDurability() {
-        return this.itemBuilder.getDurability();
+    public int getDamage() {
+        return this.itemBuilder.getDamage();
     }
 
     @Override
@@ -199,8 +199,14 @@ public abstract class WrappedSkullBuilder implements SkullBuilder {
     }
 
     @Override
-    public @NotNull SkullBuilder durability(short durability) {
-        this.itemBuilder.durability(durability);
+    public @NotNull SkullBuilder damage(int damage) {
+        this.itemBuilder.damage(damage);
+        return this;
+    }
+
+    @Override
+    public @NotNull SkullBuilder maxDamage(int maxDamage) {
+        this.itemBuilder.maxDamage(maxDamage);
         return this;
     }
 

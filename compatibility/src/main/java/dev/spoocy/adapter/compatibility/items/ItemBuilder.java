@@ -59,17 +59,27 @@ public interface ItemBuilder {
     int getAmount();
 
     /**
-     * Gets the durability of the item.
-     *
-     * @return The durability of the item.
-     *
-     * @see org.bukkit.inventory.meta.Damageable#getDamage()
-     * @throws UnsupportedOperationException if the item does not implement {@link org.bukkit.inventory.meta.Damageable}
+     * @deprecated Use {@link #getDamage()} instead.
      */
     @VersionRequirement(
             version = "1.12"
     )
-    short getDurability();
+    @Deprecated
+    default short getDurability() {
+        return (short) this.getDamage();
+    }
+
+    /**
+     * Gets the damage of the item or 0 if not damageable.
+     *
+     * @return The damage of the item.
+     *
+     * @see org.bukkit.inventory.meta.Damageable#getDamage()
+     */
+    @VersionRequirement(
+            version = "1.12"
+    )
+    int getDamage();
 
     /**
      * Gets the item flags of the item.
@@ -159,19 +169,43 @@ public interface ItemBuilder {
     @NotNull ItemBuilder amount(int amount);
 
     /**
-     * Sets the durability of the item.
-     *
-     * @param durability The durability of the item.
-     *
-     * @return The current instance of the ItemBuilder for method chaining.
-     *
+     * @see ItemBuilder#damage(int)
      * @see org.bukkit.inventory.meta.Damageable#setDamage(int)
      */
     @VersionRequirement(
             version = "1.12"
     )
+    @Deprecated
     @Contract("_ -> this")
-    @NotNull ItemBuilder durability(short durability);
+    default @NotNull ItemBuilder durability(short durability) {
+        return damage(durability);
+    }
+
+    /**
+     * Sets the damage of the item.
+     * <p>
+     * Does nothing if the item is not damageable.
+     *
+     * @param damage The damage of the item.
+     *
+     * @return The current instance of the ItemBuilder for method chaining.
+     */
+    @VersionRequirement(
+            version = "1.12"
+    )
+    @Contract("_ -> this")
+    @NotNull ItemBuilder damage(int damage);
+
+    /**
+     * Sets the maximum damage of the item.
+     * <p>
+     * Does nothing if the item is not damageable.
+     *
+     * @param maxDamage The maximum damage of the item.
+     * @return The current instance of the ItemBuilder for method chaining.
+     */
+    @Contract("_ -> this")
+    @NotNull ItemBuilder maxDamage(int maxDamage);
 
     /**
      * Sets the color of the Dye.

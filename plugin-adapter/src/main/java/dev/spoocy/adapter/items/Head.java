@@ -1,8 +1,15 @@
 package dev.spoocy.adapter.items;
 
 import dev.spoocy.adapter.compatibility.items.SkullBuilder;
+import net.kyori.adventure.text.object.ObjectContents;
+import net.kyori.adventure.text.object.PlayerHeadObjectContents;
+import net.kyori.adventure.text.object.SpriteObjectContents;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+
+import java.util.UUID;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
@@ -49,6 +56,9 @@ public enum Head {
     YELLOW_DICE("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTAyZmM4NWY4MDhiM2ZkOWMxNTg0YzE4NjljMWVmY2RkM2JhZWFmZmUyYzY3ZDU0NGZjOTg1MjQ5ODRhYSJ9fX0="),
     RED_DICE("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTEzMWRlOGU5NTFmZGQ3YjlhM2QyMzlkN2NjM2FhM2U4NjU1YTMzNmI5OTliOWVkYmI0ZmIzMjljYmQ4NyJ9fX0="),
 
+    RED_F("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODhiYmMzNTIxM2M2NTEwOWZiZDhlOTA3NzFlNGM2ZGI3ODVhOWJlOGU0MDNkMjllZDhlZDJlM2RjZmIxMjgifX19"),
+    PARTICLE_HEART("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjEyNjZiNzQ4MjQyMTE1YjMwMzcwOGQ1OWNlOWQ1NTIzYjdkNzljMTNmNmRiNGViYzkxZGQ0NzIwOWViNzU5YyJ9fX0="),
+
     ;
 
     private final String texture;
@@ -62,11 +72,24 @@ public enum Head {
         return this.texture;
     }
 
+    @Contract(" -> new")
+    @NotNull
     public SkullBuilder builder() {
         return Items.skull().textureBase64(texture);
     }
 
+
+    @Contract(" -> new")
+    @NotNull
     public ItemStack item() {
         return this.builder().build();}
 
+    @Contract(" -> new")
+    @NotNull
+    public PlayerHeadObjectContents toObjectContent() {
+        return ObjectContents.playerHead()
+                .profileProperty(PlayerHeadObjectContents.property("textures", this.texture))
+                .build();
+
+    }
 }

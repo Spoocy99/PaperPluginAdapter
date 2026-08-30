@@ -64,11 +64,11 @@ public class SpigotItemBuilder implements ItemBuilder {
     }
 
     @Override
-    public short getDurability() {
-        if(this.item instanceof Damageable) {
-            return (short) ((Damageable) this.item).getDamage();
+    public int getDamage() {
+        if(this.itemMeta instanceof Damageable) {
+            return ((Damageable) this.itemMeta).getDamage();
         }
-        throw new UnsupportedOperationException("Item is not damageable");
+        return 0;
     }
 
     @Override
@@ -142,12 +142,19 @@ public class SpigotItemBuilder implements ItemBuilder {
     }
 
     @Override
-    public @NotNull ItemBuilder durability(short durability) {
-        if(this.item instanceof Damageable) {
-            ((Damageable) this.item).setDamage(durability);
-            return this;
+    public @NotNull ItemBuilder damage(int damage) {
+        if(this.itemMeta instanceof Damageable) {
+            ((Damageable) this.itemMeta).setDamage(damage);
         }
-        throw new UnsupportedOperationException("Item is not damageable");
+        return this;
+    }
+
+    @Override
+    public @NotNull ItemBuilder maxDamage(int maxDamage) {
+        if(this.itemMeta instanceof Damageable) {
+            ((Damageable) this.itemMeta).setMaxDamage(maxDamage);
+        }
+        return this;
     }
 
     @Override
