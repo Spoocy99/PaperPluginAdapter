@@ -10,7 +10,7 @@ import java.util.List;
  * @author Spoocy99 | GitHub: Spoocy99
  */
 
-public class PageSequentialContentAnimation extends AbstractAnimation<PageGui> {
+public class PageSequentialContentAnimation extends AbstractAnimation<PageSequentialContentAnimation, PageGui> {
 
     private List<Item> allContent;
     private Coordinate[] slots;
@@ -35,11 +35,10 @@ public class PageSequentialContentAnimation extends AbstractAnimation<PageGui> {
     }
 
     @Override
-    protected void playFrame(int frame) {
+    protected boolean playFrame(int frame) {
 
         if(frame >= this.allContent.size()) {
-            stop();
-            return;
+            return false;
         }
 
         Coordinate coords = this.slots[slotIndex];
@@ -56,7 +55,12 @@ public class PageSequentialContentAnimation extends AbstractAnimation<PageGui> {
             getGui().setContentHidden(true); // clear content again
         }
 
+        return true;
+    }
 
+    @Override
+    protected PageSequentialContentAnimation instance() {
+        return this;
     }
 
 

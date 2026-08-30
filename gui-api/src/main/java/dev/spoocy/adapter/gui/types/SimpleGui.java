@@ -9,6 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface SimpleGui extends ContentGui {
 
-    void playAnimation(@NotNull Animation<SimpleGui> animation);
+    void playAnimation(@NotNull Animation<?, SimpleGui> animation);
 
 }

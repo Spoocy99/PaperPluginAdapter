@@ -72,7 +72,7 @@ public class ListGuiImpl extends ContentItemGui implements ListGui {
     }
 
     @Override
-    public void playAnimation(@NotNull Animation<ListGui> animation) {
+    public void playAnimation(@NotNull Animation<?, ListGui> animation) {
         this.playAnimationInternally(animation);
     }
 

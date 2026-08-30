@@ -27,7 +27,7 @@ public class SimpleGuiImpl extends ContentItemGui implements SimpleGui {
     }
 
     @Override
-    public void playAnimation(@NotNull Animation<SimpleGui> animation) {
+    public void playAnimation(@NotNull Animation<?, SimpleGui> animation) {
         this.playAnimationInternally(animation);
     }
 

@@ -1,8 +1,9 @@
 package dev.spoocy.adapter.gui.animation;
 
 import dev.spoocy.adapter.gui.types.Gui;
-import dev.spoocy.adapter.gui.types.PageGui;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 
@@ -10,9 +11,10 @@ import java.util.function.Consumer;
  * @author Spoocy99 | GitHub: Spoocy99
  */
 
-public interface Animation<G extends Gui> {
+public interface Animation<A extends Animation<A, G>, G extends Gui> {
 
-    static Animation<PageGui> PAGE_SEQUENTIAL_CONTENT_REVEAL(int ticksPerFrame) {
+    @Contract("_ -> new")
+    static @NonNull PageSequentialContentAnimation PAGE_SEQUENTIAL_CONTENT_REVEAL(int ticksPerFrame) {
         return new PageSequentialContentAnimation(ticksPerFrame);
     }
 
@@ -24,7 +26,8 @@ public interface Animation<G extends Gui> {
 
     void stop();
 
-    Animation<G> onFrame(@NotNull Consumer<Integer> runnable);
+    A onFrame(@NotNull Consumer<Integer> runnable);
 
-    Animation<G> onStop(@NotNull Runnable runnable);
+    A onEnd(@NotNull Runnable runnable);
+
 }

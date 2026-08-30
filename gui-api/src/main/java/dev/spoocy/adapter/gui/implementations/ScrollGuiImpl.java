@@ -59,7 +59,7 @@ public class ScrollGuiImpl extends ContentItemGui implements ScrollGui {
     }
 
     @Override
-    public void playAnimation(@NotNull Animation<ScrollGui> animation) {
+    public void playAnimation(@NotNull Animation<?, ScrollGui> animation) {
         this.playAnimationInternally(animation);
     }
 

@@ -12,6 +12,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,31 +31,34 @@ public class InventoryManager implements ListenAdapter {
         PluginAdapter.getInstance().registerListener(INSTANCE);
     }
 
-    private final Map<Inventory, CustomInventory> HANDLER_MAP = new HashMap<>();
+    //private final Map<Inventory, CustomInventory> HANDLER_MAP = new HashMap<>();
     private final Map<Player, GuiView> currentlyOpen = new HashMap<>();
     private final Set<PlayerViewProvider<?>> clearOnDisconnect = new HashSet<>();
 
     public InventoryManager() { }
 
-    public void setListen(@NotNull CustomInventory inventory, boolean listen) {
-        Inventory bukkit = inventory.getInventory();
-
-        if(listen) {
-            BukkitLogger.trace("Registered {} for event handling inventory {}", inventory, bukkit);
-            this.HANDLER_MAP.put(bukkit, inventory);
-        } else {
-            BukkitLogger.trace("Unregistered {} from event handling inventory {}", inventory, bukkit);
-            this.HANDLER_MAP.remove(bukkit);
-        }
-    }
+//    public void setListen(@NotNull CustomInventory inventory, boolean listen) {
+//        Inventory bukkit = inventory.getInventory();
+//
+//        if(listen) {
+//            BukkitLogger.trace("Registered {} for event handling inventory {}", inventory, bukkit);
+//            this.HANDLER_MAP.put(bukkit, inventory);
+//        } else {
+//            BukkitLogger.trace("Unregistered {} from event handling inventory {}", inventory, bukkit);
+//            this.HANDLER_MAP.remove(bukkit);
+//        }
+//    }
 
     @Nullable
     public CustomInventory getHandler(@NotNull Inventory inventory) {
-        CustomInventory custom = this.HANDLER_MAP.get(inventory);
-        if(custom == null) {
-            BukkitLogger.trace("No handler provided for inventory {}", inventory);
+        InventoryHolder holder = inventory.getHolder();
+
+        if(holder instanceof CustomInventory) {
+            return (CustomInventory) holder;
         }
-        return custom;
+
+        BukkitLogger.trace("Inventory {} is not a CustomInventory", inventory);
+        return null;
     }
 
     @Nullable

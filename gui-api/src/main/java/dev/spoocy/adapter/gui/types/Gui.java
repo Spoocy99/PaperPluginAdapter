@@ -170,7 +170,7 @@ public interface Gui {
     boolean isAnimationPlaying();
 
     @Nullable
-    Animation<?> getCurrentAnimation();
+    Animation<?, ?> getCurrentAnimation();
 
     void cancelAnimation();
 

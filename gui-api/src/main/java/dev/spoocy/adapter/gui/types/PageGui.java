@@ -26,6 +26,6 @@ public interface PageGui extends ContentGui, Resetable {
 
     void goBackward(@Nonnegative int pages);
 
-    void playAnimation(@NotNull Animation<PageGui> animation);
+    void playAnimation(@NotNull Animation<?, PageGui> animation);
 
 }

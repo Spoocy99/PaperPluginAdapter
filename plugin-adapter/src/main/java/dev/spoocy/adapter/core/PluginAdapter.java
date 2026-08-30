@@ -242,8 +242,7 @@ public abstract class PluginAdapter extends JavaPlugin {
             BukkitLogger.error("Error during plugin disable phase.", e);
         }
 
-        PluginConfig.compatibilityProvider()
-                .onDisable();
+        PluginConfig.compatibilityProvider().onDisable();
     }
 
     /**
@@ -269,43 +268,13 @@ public abstract class PluginAdapter extends JavaPlugin {
      */
     public abstract void handleDisable() throws Exception;
 
-    /**
-     * Logs the results of the security tests to the console.
-     *
-     * @param report The generated security report.
-     */
-    protected void logSecurityTestResult(@NotNull SecurityReport report) {
-        for (TestContext context : report.getTests()) {
-            switch (context.getResult()) {
-                case PASSED:
-                    BukkitLogger.debug(context.toString());
-                    break;
-                case SKIPPED:
-                case WARNING:
-                    BukkitLogger.warn(context.toString());
-                    for (String detail : context.getDetails()) {
-                        BukkitLogger.warn(" - {}", detail);
-                    }
-                    break;
-                case ERROR:
-                case KILL_PROGRAM:
-                    BukkitLogger.error(context.toString());
-                    for (String detail : context.getDetails()) {
-                        BukkitLogger.error(" - {}", detail);
-                    }
-            }
-        }
-    }
-
-    private boolean runSecurityTests(@NotNull SecurityTest.Stage stage) {
+    protected boolean runSecurityTests(@NotNull SecurityTest.Stage stage) {
         SecurityReport report = this.securityManager.runTests(stage);
 
-        logSecurityTestResult(report);
-
         for (TestContext context : report.getTests()) {
 
-            if (context.getResult() == CheckResult.KILL_PROGRAM) {
-                setError("Security Test Failed: " + context.getName());
+            if(context.getResult() == CheckResult.KILL_PROGRAM) {
+                setError(context.getDetails());
                 return false;
             }
 

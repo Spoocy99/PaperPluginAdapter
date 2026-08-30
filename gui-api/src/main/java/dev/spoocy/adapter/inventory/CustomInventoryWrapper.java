@@ -21,11 +21,6 @@ import java.util.List;
 public abstract class CustomInventoryWrapper implements CustomInventory {
 
     @Override
-    public @NotNull InventoryHolder getHolder() {
-        return this;
-    }
-
-    @Override
     public void open(@NotNull Player player) {
         player.openInventory(this.getInventory());
     }

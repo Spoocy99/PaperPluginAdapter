@@ -130,7 +130,7 @@ public interface PluginMessage extends SerializableComponent, PluginMessageConta
 
     @CheckReturnValue
     @Contract("_ -> new")
-    PluginMessage click(@NotNull ClickEvent event);
+    PluginMessage click(@NotNull ClickEvent<?> event);
 
     @CheckReturnValue
     @Contract("_ -> new")

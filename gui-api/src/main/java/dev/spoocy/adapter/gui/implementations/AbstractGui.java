@@ -25,7 +25,7 @@ public abstract class AbstractGui implements Gui {
     protected final int height, width, size;
     protected boolean frozen;
     protected Set<GuiChangeSubscriber> subscribers = new HashSet<>();
-    protected Animation<?> currentAnimation;
+    protected Animation<?, ?> currentAnimation;
 
     protected AbstractGui(int width, int height) {
         this.width = width;
@@ -83,13 +83,25 @@ public abstract class AbstractGui implements Gui {
     }
 
     @Override
-    public @Nullable Animation<?> getCurrentAnimation() {
+    public @Nullable Animation<?, ?> getCurrentAnimation() {
         return this.currentAnimation;
     }
 
-    protected <G extends Gui> void playAnimationInternally(@NotNull Animation<G> animation) {
-        animation.onStop(() -> this.currentAnimation = null);
-        animation.setGui((G) this);
+    protected <G extends Gui> void playAnimationInternally(@NotNull Animation<?, G> animation) {
+        G thisGui;
+
+        try {
+            thisGui = (G) this;
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Animation gui type does not match this: " + this.getClass().getSimpleName() );
+        }
+
+        if(this.currentAnimation != null) {
+            this.currentAnimation.stop();
+        }
+
+        animation.onEnd(() -> this.currentAnimation = null);
+        animation.setGui(thisGui);
         animation.start();
     }
 

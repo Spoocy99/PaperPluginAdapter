@@ -10,8 +10,10 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,11 +25,13 @@ import java.util.function.Consumer;
 
 public interface CustomInventory extends InventoryHolder {
 
-    static CustomInventory chest(@NotNull Component title, int rows) {
+    @Contract("_, _ -> new")
+    static @NotNull CustomInventory chest(@NotNull Component title, int rows) {
         return ChestInventoryImpl.create(title, rows);
     }
 
-    static CustomInventory dropper(@NotNull Component title) {
+    @Contract("_ -> new")
+    static @NotNull CustomInventory dropper(@NotNull Component title) {
         return DropperInventoryImpl.create(title);
     }
 
@@ -95,8 +99,6 @@ public interface CustomInventory extends InventoryHolder {
     @NotNull List<HumanEntity> getViewers();
 
     @NotNull InventoryType getType();
-
-    @NotNull InventoryHolder getHolder();
 
     void open(@NotNull Player player);
 

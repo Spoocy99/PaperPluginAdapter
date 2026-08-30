@@ -22,6 +22,6 @@ public interface ListGui extends ContentGui, Resetable {
 
     void scrollDown(@Nonnegative int lines);
 
-    void playAnimation(@NotNull Animation<ListGui> animation);
+    void playAnimation(@NotNull Animation<?, ListGui> animation);
 
 }

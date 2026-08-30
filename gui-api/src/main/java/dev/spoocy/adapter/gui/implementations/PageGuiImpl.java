@@ -82,7 +82,7 @@ public class PageGuiImpl extends ContentItemGui implements PageGui {
     }
 
     @Override
-    public void playAnimation(@NotNull Animation<PageGui> animation) {
+    public void playAnimation(@NotNull Animation<?, PageGui> animation) {
         this.playAnimationInternally(animation);
     }
 

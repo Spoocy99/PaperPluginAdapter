@@ -1,9 +1,11 @@
 package dev.spoocy.adapter.gui.view;
 
+import dev.spoocy.adapter.core.PluginAdapter;
 import dev.spoocy.adapter.inventory.CustomInventory;
 import dev.spoocy.adapter.log.BukkitLogger;
 import dev.spoocy.adapter.messages.Localization;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -98,9 +100,9 @@ public abstract class AbstractInventoryView extends AbstractGuiView {
             //BukkitLogger.trace("InventoryView closed for " + viewer.getUniqueId());
 
             // View is closed by other view
-            if(!this.shouldHandleClose) {
+            if(!super.shouldHandleClose) {
                 BukkitLogger.trace("Skipping close handling for " + viewer.getUniqueId() + " because another view was opened.");
-                this.shouldHandleClose = true;
+                super.shouldHandleClose = true;
 
                 if(this.isResetOnSwitch()) {
                     this.resetDisplayedGui();
@@ -111,9 +113,9 @@ public abstract class AbstractInventoryView extends AbstractGuiView {
 
             // -- View is closed by the user
 
-            if(!this.closeable) {
+            if(!super.closeable) {
                 BukkitLogger.trace("Re-opening non-closeable view for " + viewer.getUniqueId());
-                this.openView();
+                Bukkit.getScheduler().runTaskLater(PluginAdapter.getInstance(), this::openView, 2);
                 return;
             }
 

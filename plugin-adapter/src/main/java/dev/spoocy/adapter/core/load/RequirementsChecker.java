@@ -54,7 +54,7 @@ public class RequirementsChecker {
             Bukkit.spigot();
             return new TestResult(CheckResult.PASSED, "Server is running Spigot. (Version: " + Bukkit.getVersion() + ")");
         } catch (Throwable ex) {
-            return new TestResult(CheckResult.ERROR, "Your Server is not running Spigot! Please download Spigot in order to use this plugin. (Currently running " + Bukkit.getVersion() + ")");
+            return new TestResult(CheckResult.KILL_PROGRAM, "Your Server is not running Spigot! Please download Spigot in order to use this plugin. (Currently running " + Bukkit.getVersion() + ")");
         }
 
     }
@@ -75,7 +75,7 @@ public class RequirementsChecker {
             return new TestResult(CheckResult.PASSED, "Server is running a supported Minecraft version.");
         }
 
-        return new TestResult(CheckResult.ERROR, "Your Server is running an outdated version! Please update your server to at least " + this.requiredVersion + " in order to use this plugin. (Currently running " + current + ")");
+        return new TestResult(CheckResult.KILL_PROGRAM, "Your Server is running an outdated version! Please update your server to at least " + this.requiredVersion + " in order to use this plugin. (Currently running " + current + ")");
     }
 
 }

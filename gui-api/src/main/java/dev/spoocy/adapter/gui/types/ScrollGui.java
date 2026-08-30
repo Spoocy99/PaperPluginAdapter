@@ -24,6 +24,6 @@ public interface ScrollGui extends ContentGui, Resetable {
 
     void scrollBackward(@Nonnegative int amount);
 
-    void playAnimation(@NotNull Animation<ScrollGui> animation);
+    void playAnimation(@NotNull Animation<?, ScrollGui> animation);
 
 }

@@ -94,7 +94,7 @@ public abstract class AbstractCustomInventory extends CustomInventoryWrapper {
     public void setListeningForActions(boolean listening) {
         if(this.listening == listening) return;
         this.listening = listening;
-        InventoryManager.INSTANCE.setListen(this, listening);
+        //InventoryManager.INSTANCE.setListen(this, listening);
     }
 
     @CompatibilityProvided(
