@@ -1,14 +1,19 @@
 package dev.spoocy.adapter.message;
 
 import dev.spoocy.adapter.message.color.StyleImpl;
+import dev.spoocy.adapter.message.sprites.Sprites;
 import dev.spoocy.adapter.message.types.*;
 import dev.spoocy.adapter.messages.Localization;
 import dev.spoocy.adapter.messages.MessageStyle;
 import dev.spoocy.adapter.messages.PluginMessage;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.object.ObjectContents;
+import net.kyori.adventure.text.object.SpriteObjectContents;
+import org.bukkit.Material;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,46 +90,74 @@ public class Message {
      *
      * @return An instance of a Plugin message.
      */
-    public static PluginMessage msg(@NotNull String message) {
+    @Contract("_ -> new")
+    public static @NotNull PluginMessage msg(@NotNull String message) {
         return new MiniMessage(message);
     }
 
-    public static PluginMessage msgList(@NotNull List<String> messages) {
+    @Contract("_ -> new")
+    public static @NotNull PluginMessage msgList(@NotNull List<String> messages) {
         return new MinimessageListMessage(messages);
     }
 
-    public static PluginMessage text(@NotNull String text) {
+    @Contract("_ -> new")
+    public static @NotNull PluginMessage text(@NotNull String text) {
         return text( l -> text);
     }
 
-    public static PluginMessage text(@NotNull String text, @NotNull TextColor color, @NotNull TextDecoration... decorations) {
+    @Contract("_, _, _ -> new")
+    public static @NotNull PluginMessage text(@NotNull String text, @NotNull TextColor color, @NotNull TextDecoration... decorations) {
         return text(l -> text, color, decorations);
     }
 
-    public static PluginMessage text(@NotNull Function<Localization, String> text) {
+    @Contract("_ -> new")
+    public static @NotNull PluginMessage text(@NotNull Function<Localization, String> text) {
         return new TextMessage(text);
     }
 
-    public static PluginMessage text(@NotNull Function<Localization, String> text, @NotNull TextColor color, @NotNull TextDecoration... decorations) {
+    @Contract("_, _, _ -> new")
+    public static @NotNull PluginMessage text(@NotNull Function<Localization, String> text, @NotNull TextColor color, @NotNull TextDecoration... decorations) {
         return new TextMessage(text, color, decorations);
     }
 
-    public static PluginMessage translatable(@NotNull String key) {
+    @Contract("_ -> new")
+    public static @NotNull PluginMessage translatable(@NotNull String key) {
         return new TranslatableMessage(key);
     }
 
-    public static PluginMessage translatable(@NotNull String key, @NotNull TextColor color, @NotNull TextDecoration... decorations) {
+    @Contract("_, _, _ -> new")
+    public static @NotNull PluginMessage translatable(@NotNull String key, @NotNull TextColor color, @NotNull TextDecoration... decorations) {
         return new TranslatableMessage(key, color, decorations);
     }
 
-    public static PluginMessage translatableList(@NotNull String key) {
+    @Contract("_ -> new")
+    public static @NotNull PluginMessage translatableList(@NotNull String key) {
         return new ListTranslatableMessage(key);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull PluginMessage objectContent(@NotNull ObjectContents contents) {
+        return new ObjectContentMessage(contents);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull PluginMessage objectContent(@NotNull Function<Localization, ObjectContents> contents) {
+        return new ObjectContentMessage(contents);
+    }
+
+    public static @NotNull PluginMessage sprite(@NotNull SpriteObjectContents sprite) {
+        return objectContent(sprite);
+    }
+
+    public static @NotNull PluginMessage sprite(@NotNull Key atlas, @NotNull Key sprite) {
+        return objectContent(Sprites.get(atlas, sprite));
     }
 
     /*
      * Component methods
      */
 
+    @NotNull
     public static Component cmp(@NotNull String message) {
         return PROCESSOR.miniMessageSerializer().deserialize(message);
     }

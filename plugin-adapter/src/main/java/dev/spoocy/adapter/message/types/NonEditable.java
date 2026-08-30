@@ -74,7 +74,7 @@ public abstract class NonEditable extends MessageProvider implements PluginMessa
     }
 
     @Override
-    public PluginMessage click(@NotNull ClickEvent event) {
+    public PluginMessage click(@NotNull ClickEvent<?> event) {
         throw new UnsupportedOperationException("This message is not editable.");
     }
 
