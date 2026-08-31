@@ -122,11 +122,6 @@ public class ConfigManager extends BaseResourceResolver {
     }
 
     @NotNull
-    public Document loadConfigFile(@NotNull Resource resource, boolean requireExists, @NotNull String defaultsPath) throws IOException {
-        return loadConfigFile(resource, requireExists, new BukkitConfigUpdater(this.plugin, defaultsPath));
-    }
-
-    @NotNull
     public Document loadConfigFile(@NotNull Resource resource, boolean requireExists, @Nullable ConfigUpdater updater) throws IOException {
         Args.notNull(resource, "resource");
 

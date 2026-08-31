@@ -21,26 +21,52 @@ import java.util.List;
 
 public class BukkitConfigUpdater implements ConfigUpdater, ConfigProvider {
 
-    private static final VersionResolver DEFAULT_RESOLVER = new PathVersionResolver("config-version", Version.ZERO);
+    public static final VersionResolver RESOLVER = new PathVersionResolver("config-version", Version.ZERO);
+
+    @Nullable
+    private final Config newer;
+
+    @Nullable
+    private final Resource resource;
 
     private final PluginAdapter plugin;
     private final VersionResolver resolver;
-    private final Resource resource;
     private final MissingFieldsMigration migration;
 
     public BukkitConfigUpdater(@NotNull PluginAdapter plugin, @NotNull String classPath) {
-        this(plugin, classPath, DEFAULT_RESOLVER, null);
+        this(plugin, classPath, RESOLVER, null);
     }
 
     public BukkitConfigUpdater(@NotNull PluginAdapter plugin, @NotNull String classPath, @NotNull VersionResolver resolver, @Nullable VersionMatcher matcher) {
+        this(plugin, plugin.getClassPathResource(classPath), resolver, matcher);
+    }
+
+    public BukkitConfigUpdater(@NotNull PluginAdapter plugin, @NotNull Resource resource, @NotNull VersionResolver resolver, @Nullable VersionMatcher matcher) {
+        this(plugin, null, resource, resolver, matcher);
+    }
+
+    public BukkitConfigUpdater(@NotNull PluginAdapter plugin, @NotNull Config newer, @NotNull VersionResolver resolver, @Nullable VersionMatcher matcher) {
+        this(plugin, newer, null, resolver, matcher);
+    }
+
+    private BukkitConfigUpdater(@NotNull PluginAdapter plugin, @Nullable Config newer, @Nullable Resource resource, @NotNull VersionResolver resolver, @Nullable VersionMatcher matcher) {
         this.plugin = plugin;
         this.resolver = resolver;
-        this.resource = Resources.fromJar(classPath, PluginAdapter.class.getClassLoader());
+        this.newer = newer;
+        this.resource = resource;
         this.migration = new MissingFieldsMigration(this, matcher, resolver);
     }
 
     @Override
     public @NotNull Config provide() {
+        if(this.newer != null) {
+            return this.newer;
+        }
+
+        if(this.resource == null) {
+            throw new IllegalStateException("No provided newer config or resource.");
+        }
+
         try {
             return this.plugin.loadConfig(this.resource);
         } catch (IOException e) {
@@ -63,7 +89,7 @@ public class BukkitConfigUpdater implements ConfigUpdater, ConfigProvider {
         }
 
         if (name == null) {
-            name = "Memory[" + configSection.getName() + "]";
+            name = "Config[" + configSection.getName() + "]";
         }
 
         BukkitLogger.debug("Validating config: {}", name);
@@ -81,21 +107,16 @@ public class BukkitConfigUpdater implements ConfigUpdater, ConfigProvider {
             return 0;
         }
 
-        int appliedMigrations = 0;
-
         if(current == null || this.migration.toVersion().isNewerThan(current)) {
             BukkitLogger.debug("Migrating config for {}", name);
             this.migration.apply(configSection);
             current = this.migration.toVersion();
-            appliedMigrations++;
-        }
-
-         if (appliedMigrations > 0) {
+            this.resolver.apply(configSection, current);
             BukkitLogger.info("Config {} has been updated to Version {}.", name,  current);
-        } else {
-            BukkitLogger.debug("Config {} is up to date.", name);
+            return 1;
         }
 
-        return appliedMigrations;
+        BukkitLogger.debug("Config {} is up to date.", name);
+        return 0;
     }
 }

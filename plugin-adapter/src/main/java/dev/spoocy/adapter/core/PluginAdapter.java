@@ -406,11 +406,6 @@ public abstract class PluginAdapter extends JavaPlugin {
     }
 
     @NotNull
-    public Document loadConfig(@NotNull Resource resource, boolean requireExists, @NotNull String defaultsPath) throws IOException {
-        return this.configManager.loadConfigFile(resource, requireExists, defaultsPath);
-    }
-
-    @NotNull
     public Document loadConfig(@NotNull Resource resource, boolean requireExists, @Nullable ConfigUpdater updater) throws IOException {
         return this.configManager.loadConfigFile(resource, requireExists, updater);
     }
