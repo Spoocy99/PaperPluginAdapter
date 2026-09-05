@@ -40,7 +40,7 @@ public interface MessageStyle {
     Font font();
 
     @Nullable
-    ClickEvent clickEvent(@NotNull Localization locale);
+    ClickEvent<?> clickEvent(@NotNull Localization locale);
 
     @Nullable
     HoverEvent<?> hoverEvent(@NotNull Localization locale);
@@ -118,7 +118,7 @@ public interface MessageStyle {
         Builder hover(@Nullable PluginMessageContainer message);
 
         @Contract("_ -> this")
-        Builder click(@Nullable ClickEvent event);
+        Builder click(@Nullable ClickEvent<?> event);
 
         @Contract("_ -> this")
         @NotNull default Builder openUrl(@Nullable String url) {

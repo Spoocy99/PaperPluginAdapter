@@ -1,7 +1,6 @@
 package dev.spoocy.adapter.message.color;
 
 import com.google.common.collect.ImmutableMap;
-import dev.spoocy.adapter.message.Message;
 import dev.spoocy.adapter.message.font.Fonts;
 import dev.spoocy.adapter.messages.Localization;
 import dev.spoocy.adapter.messages.MessageStyle;
@@ -18,7 +17,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.InetAddress;
 import java.util.*;
 import java.util.function.Function;
 
@@ -316,7 +314,7 @@ public class StyleImpl implements MessageStyle {
                 this.placeholders = new ArrayList<>();
             }
 
-            this.placeholders.add(new PlaceholderImpl(key, message.getPluginMessage()));
+            this.placeholders.add(new PluginMessagePlaceholder(key, message.getPluginMessage()));
             return this;
         }
 
@@ -339,13 +337,15 @@ public class StyleImpl implements MessageStyle {
         }
     }
 
-    private static class PlaceholderImpl implements Placeholder {
+    private static class PluginMessagePlaceholder implements Placeholder {
+
         @NotNull
         private final String key;
+
         @NotNull
         private final PluginMessage message;
 
-        public PlaceholderImpl(@NotNull @TagPattern String key, @NotNull PluginMessage message) {
+        public PluginMessagePlaceholder(@NotNull @TagPattern String key, @NotNull PluginMessage message) {
             this.key = key;
             this.message = message;
         }

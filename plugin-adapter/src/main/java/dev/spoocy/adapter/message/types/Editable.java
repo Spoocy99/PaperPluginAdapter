@@ -229,7 +229,7 @@ public abstract class Editable extends MessageProvider implements PluginMessage 
             ;
         }
 
-        ClickEvent clickEvent = this.style.clickEvent(locale);
+        ClickEvent<?> clickEvent = this.style.clickEvent(locale);
         if (clickEvent != null) {
             component = component.clickEvent(clickEvent);
         }
@@ -243,6 +243,7 @@ public abstract class Editable extends MessageProvider implements PluginMessage 
         return font != null ? font.applyTo(component) : component;
     }
 
+    @NotNull
     protected static List<Component> cmpToLines(@NotNull Component cmp, int maxCharsPerLine, @Nullable Component linePrefix) {
         String text = PlainTextComponentSerializer.plainText().serialize(cmp);
         List<Component> lines = new LinkedList<>();
