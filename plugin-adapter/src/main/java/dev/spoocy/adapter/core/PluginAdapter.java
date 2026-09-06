@@ -49,6 +49,10 @@ public abstract class PluginAdapter extends JavaPlugin {
     private static PluginAdapter INSTANCE;
 
     public static PluginAdapter getInstance() {
+        if(INSTANCE == null) {
+            throw new IllegalStateException("Instance call before init!");
+        }
+
         return INSTANCE;
     }
 
@@ -56,6 +60,7 @@ public abstract class PluginAdapter extends JavaPlugin {
         if (INSTANCE != null) {
             throw new IllegalStateException("PluginAdapter instance already set!");
         }
+
         INSTANCE = this;
     }
 
@@ -504,6 +509,11 @@ public abstract class PluginAdapter extends JavaPlugin {
     }
 
     private void checkRelocation() {
+        String property = System.getProperty("pluginadapter.relocatecheck");
+        if (property != null && property.equals("false")) {
+            return;
+        }
+
         String defaultPackage = new String(new byte[]{100, 101, 118, 46, 115, 112, 111, 111, 99, 121, 46, 97, 100, 97, 112, 116, 101, 114});
         String current = PluginAdapter.class.getPackage()
                 .getName();
