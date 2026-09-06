@@ -94,10 +94,12 @@ public class Color {
             HIGHLIGHT = processor(() -> PluginConfig.primaryColor().value()),
             ERROR = processor(() -> PluginConfig.errorColor().value());
 
+    @NotNull
     public static TextColor fromBukkit(@NotNull ChatColor color) {
         return TextColor.color(color.getColor().getRed(), color.getColor().getGreen(), color.getColor().getBlue());
     }
 
+    @NotNull
     public static TextColor processor(@NotNull Supplier<Integer> processor) {
         return new ColorProcessor(processor);
     }
