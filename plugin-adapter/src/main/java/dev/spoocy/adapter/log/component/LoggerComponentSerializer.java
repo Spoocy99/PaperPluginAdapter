@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
 import net.kyori.adventure.util.ComponentMessageThrowable;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -15,15 +16,31 @@ import java.util.function.Function;
 
 public class LoggerComponentSerializer {
 
-    public static final ComponentFlattener DEFAULT_FLATTENER = ComponentFlattener
-            .basic()
-            .toBuilder()
-            .unknownMapper(component -> {
-                throw new UnsupportedOperationException("Don't know how to turn " + component.getClass().getSimpleName() + " into a string");
-            })
-            .build();
+    public static final ComponentFlattener DEFAULT_FLATTENER;
 
-    public static LoggerComponentSerializer create(final Function<Component, String> serializer) {
+    static {
+        ComponentFlattener flattener;
+
+        try {
+            flattener = ComponentFlattener
+                    .basic()
+                    .toBuilder()
+                    .unknownMapper(component -> {
+                        throw new UnsupportedOperationException("Don't know how to turn " + component.getClass()
+                                .getSimpleName() + " into a string");
+                    })
+                    .build();
+
+        } catch (NoSuchMethodError e) {
+            // pre v4.7
+            flattener = ComponentFlattener.basic();
+        }
+
+        DEFAULT_FLATTENER = flattener;
+    }
+
+    @Contract(value = "_ -> new", pure = true)
+    public static @NotNull LoggerComponentSerializer create(final Function<Component, String> serializer) {
         return new LoggerComponentSerializer(serializer);
     }
 
@@ -41,10 +58,10 @@ public class LoggerComponentSerializer {
         Object[] writable = Arrays.copyOf(args, args.length);
         Throwable t = null;
 
-        for(int i = 0; i < writable.length; ++i) {
+        for (int i = 0; i < writable.length; ++i) {
 
             if (writable[i] instanceof ComponentLike) {
-                writable[i] = this.serialize( ((ComponentLike) writable[i]).asComponent() );
+                writable[i] = this.serialize(((ComponentLike) writable[i]).asComponent());
             }
 
             if (writable[i] instanceof ComponentMessageThrowable) {
@@ -57,7 +74,7 @@ public class LoggerComponentSerializer {
 
         }
 
-        if(t != null && writable[writable.length - 1] != t) {
+        if (t != null && writable[writable.length - 1] != t) {
             writable = Arrays.copyOf(writable, writable.length + 1);
             writable[writable.length - 1] = t;
         }
@@ -78,7 +95,11 @@ public class LoggerComponentSerializer {
                 Throwable cause = maybeRich.getCause() != null ? unpack(maybeRich.getCause(), serializer) : null;
                 Throwable[] suppressed = maybeRich.getSuppressed();
 
-                UnpackedComponentThrowable ret = new UnpackedComponentThrowable(maybeRich.getClass(), serializer.apply(message), cause);
+                UnpackedComponentThrowable ret = new UnpackedComponentThrowable(
+                        maybeRich.getClass(),
+                        serializer.apply(message),
+                        cause
+                );
                 ret.setStackTrace(maybeRich.getStackTrace());
 
                 for (Throwable throwable : suppressed) {
@@ -89,7 +110,11 @@ public class LoggerComponentSerializer {
             }
         }
 
-        private UnpackedComponentThrowable(final Class<? extends Throwable> backingType, final String serializedMessage, final Throwable cause) {
+        private UnpackedComponentThrowable(
+                final Class<? extends Throwable> backingType,
+                final String serializedMessage,
+                final Throwable cause
+        ) {
             super(serializedMessage, cause);
             this.backingType = backingType;
         }
