@@ -6,6 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Logging alias for the annotated class
+ *
  * @author Spoocy99 | GitHub: Spoocy99
  */
 
