@@ -1,7 +1,7 @@
 package dev.spoocy.adapter.inventory;
 
-import dev.spoocy.adapter.log.BukkitLogger;
 import dev.spoocy.adapter.compatibility.annotations.CompatibilityProvided;
+import dev.spoocy.adapter.log.BukkitLogger;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.*;
@@ -116,7 +116,7 @@ public abstract class AbstractCustomInventory extends CustomInventoryWrapper {
     @Override
     public void handle(@NotNull InventoryOpenEvent event) {
         if(!this.listening) {
-            BukkitLogger.warn("Received InventoryOpenEvent for inventory {} but listening is disabled!", this.toString());
+            BukkitLogger.debug("Received InventoryOpenEvent for inventory {} but listening is disabled!", this.toString());
             return;
         }
         this.onOpen.accept(event);
@@ -125,7 +125,7 @@ public abstract class AbstractCustomInventory extends CustomInventoryWrapper {
     @Override
     public void handle(@NotNull InventoryCloseEvent event) {
         if(!this.listening) {
-            BukkitLogger.warn("Received InventoryCloseEvent for inventory {} but listening is disabled!", this.toString());
+            BukkitLogger.debug("Received InventoryCloseEvent for inventory {} but listening is disabled!", this.toString());
             return;
         }
         this.onClose.accept(event);
@@ -134,7 +134,7 @@ public abstract class AbstractCustomInventory extends CustomInventoryWrapper {
     @Override
     public void handle(@NotNull InventoryClickEvent event) {
         if(!this.listening) {
-            BukkitLogger.warn("Received InventoryClickEvent for inventory {} but listening is disabled!", this.toString());
+            BukkitLogger.debug("Received InventoryClickEvent for inventory {} but listening is disabled!", this.toString());
             return;
         }
         this.onClick.accept(event);
@@ -143,7 +143,7 @@ public abstract class AbstractCustomInventory extends CustomInventoryWrapper {
     @Override
     public void handle(@NotNull InventoryDragEvent event) {
         if(!this.listening) {
-            BukkitLogger.warn("Received InventoryDragEvent for inventory {} but listening is disabled!", this.toString());
+            BukkitLogger.debug("Received InventoryDragEvent for inventory {} but listening is disabled!", this.toString());
             return;
         }
         this.onDrag.accept(event);
@@ -152,7 +152,7 @@ public abstract class AbstractCustomInventory extends CustomInventoryWrapper {
     @Override
     public void handle(@NotNull InventoryMoveItemEvent event) {
         if(!this.listening) {
-            BukkitLogger.warn("Received InventoryMoveItemEvent for inventory {} but listening is disabled!", this.toString());
+            BukkitLogger.debug("Received InventoryMoveItemEvent for inventory {} but listening is disabled!", this.toString());
             return;
         }
         this.onMove.accept(event);
