@@ -1,11 +1,8 @@
 package dev.spoocy.adapter.inventory.impl;
 
-import dev.spoocy.adapter.core.config.PluginConfig;
 import dev.spoocy.adapter.inventory.AbstractBukkitInventory;
-import dev.spoocy.adapter.message.Message;
-import dev.spoocy.adapter.compatibility.annotations.CompatibilityProvided;
+import dev.spoocy.adapter.inventory.InventoryManager;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,13 +23,9 @@ public class ChestInventoryImpl extends AbstractBukkitInventory {
         super(title, rows * 9, register);
     }
 
-    @CompatibilityProvided(
-            paper = true,
-            spigot = true
-    )
     @Override
     protected @NotNull Inventory createInventory(int size, @NotNull Component title) {
-        return PluginConfig.compatibilityProvider().createInventory(this, size, title);
+        return InventoryManager.INSTANCE.getFactory().createInventory(this, size, title);
     }
 
     @Override

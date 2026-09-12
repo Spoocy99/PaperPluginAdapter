@@ -1,19 +1,19 @@
 package dev.spoocy.adapter.gui.icon;
 
 import dev.spoocy.adapter.compatibility.items.BukkitCompatibility;
-import dev.spoocy.adapter.items.Items;
-import dev.spoocy.adapter.message.Message;
-import dev.spoocy.adapter.messages.Localization;
-import dev.spoocy.adapter.messages.PluginMessage;
+import dev.spoocy.adapter.inventory.InventoryManager;
+import dev.spoocy.adapter.message.LocalizedComponent;
 import dev.spoocy.utils.common.collections.Collector;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnegative;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
@@ -23,49 +23,51 @@ public interface Icon {
 
     Icon EMPTY = new Empty();
 
-    static Icon of(@NotNull Material material) {
+    @Contract("_ -> new")
+    static @NotNull Icon of(@NotNull Material material) {
         return new Builder(material);
     }
 
-    static Icon of(@NotNull ItemStack itemStack) {
+    @Contract("_ -> new")
+    static @NotNull Icon of(@NotNull ItemStack itemStack) {
         return new Builder(itemStack);
     }
 
-    Icon name(@NotNull PluginMessage name);
+    Icon name(@NotNull LocalizedComponent name);
 
-    Icon lore(@NotNull PluginMessage... lines);
+    Icon lore(@NotNull LocalizedComponent... lines);
 
-    Icon lore(@NotNull List<PluginMessage> lines);
+    Icon lore(@NotNull List<LocalizedComponent> lines);
 
-    Icon addLore(@NotNull PluginMessage line);
+    Icon addLore(@NotNull LocalizedComponent line);
 
     Icon amount(@Nonnegative int amount);
 
     Icon glowing();
 
-    ItemStack decode(@NotNull Localization localization);
+    ItemStack decode(@NotNull Locale localization);
 
     class Empty implements Icon {
 
         private Empty() { }
 
         @Override
-        public Icon name(@NotNull PluginMessage name) {
+        public Icon name(@NotNull LocalizedComponent name) {
             return this;
         }
 
         @Override
-        public Icon lore(@NotNull PluginMessage... lines) {
+        public Icon lore(@NotNull LocalizedComponent... lines) {
             return this;
         }
 
         @Override
-        public Icon lore(@NotNull List<PluginMessage> lines) {
+        public Icon lore(@NotNull List<LocalizedComponent> lines) {
             return this;
         }
 
         @Override
-        public Icon addLore(@NotNull PluginMessage line) {
+        public Icon addLore(@NotNull LocalizedComponent line) {
             return this;
         }
 
@@ -80,8 +82,10 @@ public interface Icon {
         }
 
         @Override
-        public ItemStack decode(@NotNull Localization localization) {
-            return Items.item(Material.PAPER)
+        public ItemStack decode(@NotNull Locale localization) {
+            return InventoryManager.INSTANCE
+                    .getFactory()
+                    .itemBuilder(Material.PAPER)
                     .displayName(Component.text("Empty Icon"))
                     .build()
                     ;
@@ -91,8 +95,8 @@ public interface Icon {
     class Builder implements Icon {
 
         private final ItemStack item;
-        private PluginMessage name = Message.EMPTY;
-        private List<PluginMessage> lore = new LinkedList<>();
+        private LocalizedComponent name = LocalizedComponent.EMPTY;
+        private List<LocalizedComponent> lore = new LinkedList<>();
         private int amount = 1;
         private boolean glowing = false;
 
@@ -105,25 +109,25 @@ public interface Icon {
         }
 
         @Override
-        public Icon name(@NotNull PluginMessage name) {
+        public Icon name(@NotNull LocalizedComponent name) {
             this.name = name;
             return this;
         }
 
         @Override
-        public Icon lore(@NotNull PluginMessage... lines) {
+        public Icon lore(@NotNull LocalizedComponent... lines) {
             this.lore = Collector.of(lines).asList();
             return this;
         }
 
         @Override
-        public Icon lore(@NotNull List<PluginMessage> lines) {
+        public Icon lore(@NotNull List<LocalizedComponent> lines) {
             this.lore = lines;
             return this;
         }
 
         @Override
-        public Icon addLore(@NotNull PluginMessage line) {
+        public Icon addLore(@NotNull LocalizedComponent line) {
             this.lore.add(line);
             return this;
         }
@@ -141,15 +145,17 @@ public interface Icon {
         }
 
         @Override
-        public ItemStack decode(@NotNull Localization localization) {
+        public ItemStack decode(@NotNull Locale locale) {
             List<Component> cmplore = new LinkedList<>();
 
-            for(PluginMessage line : this.lore) {
-                cmplore.addAll(line.cmpList(localization));
+            for(LocalizedComponent line : this.lore) {
+                cmplore.addAll(line.cmpLines(locale));
             }
 
-            return Items.item(this.item)
-                    .displayName(this.name.cmp(localization))
+            return InventoryManager.INSTANCE
+                    .getFactory()
+                    .itemBuilder(this.item)
+                    .displayName(this.name.cmp(locale))
                     .clearLore()
                     .lore(cmplore)
                     .amount(this.amount)

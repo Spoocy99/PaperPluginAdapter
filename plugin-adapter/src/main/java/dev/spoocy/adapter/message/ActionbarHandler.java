@@ -1,6 +1,6 @@
 package dev.spoocy.adapter.message;
 
-import dev.spoocy.adapter.messages.PluginMessage;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ActionbarHandler {
 
-    void sendActionbar(@NotNull Player player, @NotNull PluginMessage message);
+    void sendActionbar(@NotNull Player player, @NotNull Component message);
 
 }

@@ -1,6 +1,7 @@
 package dev.spoocy.adapter.gui.types;
 
 import dev.spoocy.adapter.gui.animation.Animation;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnegative;
@@ -26,6 +27,6 @@ public interface PageGui extends ContentGui, Resetable {
 
     void goBackward(@Nonnegative int pages);
 
-    void playAnimation(@NotNull Animation<?, PageGui> animation);
+    void playAnimation(@NotNull Animation<?, PageGui> animation, @NotNull Plugin plugin);
 
 }

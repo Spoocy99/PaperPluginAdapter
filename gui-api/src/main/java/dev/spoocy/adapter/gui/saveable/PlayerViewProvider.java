@@ -1,7 +1,6 @@
 package dev.spoocy.adapter.gui.saveable;
 
 import com.google.common.collect.ImmutableList;
-import dev.spoocy.adapter.event.ListenAdapter;
 import dev.spoocy.adapter.gui.view.GuiView;
 import dev.spoocy.adapter.inventory.InventoryManager;
 import dev.spoocy.adapter.log.BukkitLogger;
@@ -19,7 +18,7 @@ import java.util.function.Predicate;
  */
 
 @LogAs("PlayerViewProvider")
-public abstract class PlayerViewProvider<V extends GuiView> implements ViewProvider<Player, V>, ListenAdapter {
+public abstract class PlayerViewProvider<V extends GuiView> implements ViewProvider<Player, V> {
 
     private final HashMap<Player, V> data = new HashMap<>();
 

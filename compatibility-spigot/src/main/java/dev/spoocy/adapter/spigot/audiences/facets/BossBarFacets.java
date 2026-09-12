@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
@@ -21,7 +22,7 @@ public class BossBarFacets {
 
     public static final BossBarFacets INSTANCE = new BossBarFacets();
 
-    private final Map<BossBar, Facet> facets = new java.util.WeakHashMap<>();
+    private final Map<BossBar, Facet> facets = new WeakHashMap<>();
 
     private BossBarFacets() {
 

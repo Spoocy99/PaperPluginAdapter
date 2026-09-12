@@ -1,9 +1,7 @@
 package dev.spoocy.adapter.items;
 
 import dev.spoocy.adapter.compatibility.items.ItemBuilder;
-import dev.spoocy.adapter.compatibility.items.SkullBuilder;
 import dev.spoocy.adapter.core.config.PluginConfig;
-import dev.spoocy.adapter.items.skulls.SkullBuilderProvider;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -33,8 +31,8 @@ public final class Items {
         return PluginConfig.compatibilityProvider().itemBuilder(item);
     }
 
-    public static SkullBuilder skull() {
-        return SkullBuilderProvider.createSkullBuilder(item(emptySkull()));
+    public static ItemBuilder skull() {
+        return item(Material.PLAYER_HEAD);
     }
 
 }

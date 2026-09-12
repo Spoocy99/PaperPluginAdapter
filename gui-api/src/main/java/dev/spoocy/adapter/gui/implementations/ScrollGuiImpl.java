@@ -1,12 +1,13 @@
 package dev.spoocy.adapter.gui.implementations;
 
 import dev.spoocy.adapter.gui.animation.Animation;
-import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.content.GuiItemProvider;
+import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.layout.Coordinate;
 import dev.spoocy.adapter.gui.layout.builder.CharLayout;
 import dev.spoocy.adapter.gui.layout.builder.Layout;
 import dev.spoocy.adapter.gui.types.ScrollGui;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnegative;
@@ -59,8 +60,8 @@ public class ScrollGuiImpl extends ContentItemGui implements ScrollGui {
     }
 
     @Override
-    public void playAnimation(@NotNull Animation<?, ScrollGui> animation) {
-        this.playAnimationInternally(animation);
+    public void playAnimation(@NotNull Animation<?, ScrollGui> animation, @NotNull Plugin plugin) {
+        this.playAnimationInternally(animation, plugin);
     }
 
     @Override

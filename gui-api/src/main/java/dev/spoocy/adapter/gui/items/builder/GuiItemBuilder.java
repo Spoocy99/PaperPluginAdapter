@@ -4,14 +4,16 @@ import dev.spoocy.adapter.gui.click.Click;
 import dev.spoocy.adapter.gui.icon.Icon;
 import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.types.Gui;
-import dev.spoocy.adapter.messages.Localization;
 import dev.spoocy.adapter.sound.PSound;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.*;
+import java.util.Locale;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
@@ -27,7 +29,7 @@ public interface GuiItemBuilder {
 
         BasicBuilder allowInteraction(@NotNull ClickType... clickTypes);
 
-        BasicBuilder item(@NotNull Function<Localization, ItemStack> itemStack);
+        BasicBuilder item(@NotNull Function<Locale, ItemStack> itemStack);
 
         BasicBuilder run(@NotNull Consumer<Click> runnable);
 

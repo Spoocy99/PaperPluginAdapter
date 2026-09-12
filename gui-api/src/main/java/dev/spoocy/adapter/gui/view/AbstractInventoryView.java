@@ -1,9 +1,9 @@
 package dev.spoocy.adapter.gui.view;
 
-import dev.spoocy.adapter.core.PluginAdapter;
 import dev.spoocy.adapter.inventory.CustomInventory;
+import dev.spoocy.adapter.inventory.InventoryManager;
 import dev.spoocy.adapter.log.BukkitLogger;
-import dev.spoocy.adapter.messages.Localization;
+import dev.spoocy.adapter.message.LocalizedComponent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -12,7 +12,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
+import java.util.Locale;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
@@ -25,8 +25,8 @@ public abstract class AbstractInventoryView extends AbstractGuiView {
 
     public AbstractInventoryView(
             @NotNull Player viewer,
-            @NotNull Localization locale,
-            @NotNull Function<Localization, Component> title,
+            @NotNull Locale locale,
+            @NotNull LocalizedComponent title,
             boolean closeable
     ) {
         super(viewer, locale, title, closeable);
@@ -53,9 +53,14 @@ public abstract class AbstractInventoryView extends AbstractGuiView {
     }
 
     @Override
-    protected void updateLocale(@NotNull Localization locale) {
+    protected void updateLocale(@NotNull Locale locale) {
         this.buildInventory();
         this.redraw();
+    }
+
+    @NotNull
+    private Component buildTitle() {
+        return super.title.cmp(this.locale);
     }
 
     protected void buildInventory() {
@@ -66,7 +71,7 @@ public abstract class AbstractInventoryView extends AbstractGuiView {
             this.inventory.onClose(e -> { });
         }
 
-        this.inventory = createInventory(this.getTitle());
+        this.inventory = createInventory(this.buildTitle());
 
         if(this.isOpen()) {
             this.openView();
@@ -115,7 +120,7 @@ public abstract class AbstractInventoryView extends AbstractGuiView {
 
             if(!super.closeable) {
                 BukkitLogger.trace("Re-opening non-closeable view for " + viewer.getUniqueId());
-                Bukkit.getScheduler().runTaskLater(PluginAdapter.getInstance(), this::openView, 2);
+                Bukkit.getScheduler().runTaskLater(InventoryManager.INSTANCE.getInitializerPlugin(), this::openView, 2);
                 return;
             }
 

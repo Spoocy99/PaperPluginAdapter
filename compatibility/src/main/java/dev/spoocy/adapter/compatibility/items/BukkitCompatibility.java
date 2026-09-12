@@ -1,6 +1,6 @@
 package dev.spoocy.adapter.compatibility.items;
 
-import dev.spoocy.adapter.compatibility.RegistryReader;
+import dev.spoocy.adapter.registries.RegistryReader;
 import org.bukkit.Particle;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;

@@ -1,29 +1,31 @@
 package dev.spoocy.adapter.spigot.audiences;
 
+import dev.spoocy.adapter.language.Localization;
+import dev.spoocy.adapter.language.LocalizedReceiver;
 import dev.spoocy.adapter.spigot.SpigotCompatibilityProvider;
 import dev.spoocy.adapter.spigot.audiences.facets.BossBarFacets;
 import dev.spoocy.utils.common.misc.Args;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.chat.ChatType;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.dialog.DialogLike;
+import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.inventory.Book;
+import net.kyori.adventure.pointer.Pointers;
 import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.sound.SoundStop;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -31,12 +33,46 @@ import java.util.function.Consumer;
  * @author Spoocy99 | GitHub: Spoocy99
  */
 
-public class SpigotPlayerAudience implements Audience {
+public class SpigotPlayerAudience extends AbstractAudience implements LocalizedReceiver {
 
     private final UUID uuid;
+    private final Pointers pointers;
 
     public SpigotPlayerAudience(@NotNull UUID uuid) {
         this.uuid = Args.notNull(uuid, "uuid");
+
+        this.pointers = Pointers.builder()
+                .withStatic(Identity.UUID, this.uuid)
+
+                .withDynamic(Identity.NAME, () -> {
+                    Player p = Bukkit.getPlayer(this.uuid);
+                    return p == null ? null : p.getName();
+                })
+
+                .withDynamic(Identity.DISPLAY_NAME, () -> {
+                    Player p = Bukkit.getPlayer(this.uuid);
+                    return p == null ? null : SpigotCompatibilityProvider.BUNGEE_TEXT_SERIALIZER.deserialize(p.getDisplayName());
+                })
+
+                .withDynamic(Identity.LOCALE, this::getLocale)
+
+                .build();
+    }
+
+    @Override
+    public @NotNull Pointers pointers() {
+        return this.pointers;
+    }
+
+    @Override
+    public @NotNull Locale getLocale() {
+        Player player = Bukkit.getPlayer(this.uuid);
+
+        if(player == null) {
+            return Localization.DEFAULT_LOCALE;
+        }
+
+        return Localization.parseLocale(player.getLocale());
     }
 
     private void apply(@NotNull Consumer<Player> consumer) {
@@ -53,17 +89,9 @@ public class SpigotPlayerAudience implements Audience {
         }
     }
 
-    private String toMessage(@NotNull ComponentLike message) {
-        return SpigotCompatibilityProvider.BUNGEE_TEXT_SERIALIZER.serialize(message.asComponent());
-    }
-
-    private BaseComponent[] toCmp(@NotNull ComponentLike message) {
-        return SpigotCompatibilityProvider.BUNGEE_COMPONENT_SERIALIZER.serialize(message.asComponent());
-    }
-
     @Override
     public void sendMessage(@NotNull Component message) {
-        apply(player -> player.spigot().sendMessage(toCmp(message)));
+        apply(player -> player.spigot().sendMessage(renderBungee(message)));
     }
 
     @Override
@@ -72,10 +100,10 @@ public class SpigotPlayerAudience implements Audience {
             @NotNull ChatType.Bound boundChatType
     ) {
         if (boundChatType.type().equals(ChatType.CHAT)) {
-            apply(player -> player.spigot().sendMessage(toCmp(message)));
+            apply(player -> player.spigot().sendMessage(renderBungee(message)));
 
         } else {
-            apply(player -> player.spigot().sendMessage(ChatMessageType.SYSTEM, toCmp(message)));
+            apply(player -> player.spigot().sendMessage(ChatMessageType.SYSTEM, renderBungee(message)));
         }
     }
 
@@ -90,12 +118,12 @@ public class SpigotPlayerAudience implements Audience {
     @Override
     public void deleteMessage(@NotNull SignedMessage signedMessage) {
         // signed messages not supported in spigot
-        Audience.super.deleteMessage(signedMessage);
+        super.deleteMessage(signedMessage);
     }
 
     @Override
     public void sendActionBar(@NotNull Component message) {
-        apply(player -> player.spigot().sendMessage(ChatMessageType.ACTION_BAR, toCmp(message)));
+        apply(player -> player.spigot().sendMessage(ChatMessageType.ACTION_BAR, renderBungee(message)));
     }
 
     @Override
@@ -104,8 +132,8 @@ public class SpigotPlayerAudience implements Audience {
             @NotNull Component footer
     ) {
         apply(player -> player.setPlayerListHeaderFooter(
-                toMessage(header),
-                toMessage(footer)
+                renderText(header),
+                renderText(footer)
         ));
     }
 
@@ -122,8 +150,8 @@ public class SpigotPlayerAudience implements Audience {
         int fadeOut = toTicks(times.fadeOut());
 
         apply(player -> player.sendTitle(
-                toMessage(title.title()),
-                toMessage(title.subtitle()),
+                renderText(title.title()),
+                renderText(title.subtitle()),
                 fadeIn,
                 stay,
                 fadeOut
@@ -139,6 +167,7 @@ public class SpigotPlayerAudience implements Audience {
             @NotNull T value
     ) {
         // not supported in spigot
+        super.sendTitlePart(part, value);
     }
 
     @Override
@@ -164,6 +193,7 @@ public class SpigotPlayerAudience implements Audience {
     @Override
     public void playSound(@NotNull Sound sound) {
         // not supported in spigot
+        super.playSound(sound);
     }
 
     @Override
@@ -174,6 +204,7 @@ public class SpigotPlayerAudience implements Audience {
             double z
     ) {
         // not supported in spigot
+        super.playSound(sound, x, y, z);
     }
 
     @Override
@@ -182,21 +213,25 @@ public class SpigotPlayerAudience implements Audience {
             @NotNull Sound.Emitter emitter
     ) {
         // not supported in spigot
+        super.playSound(sound, emitter);
     }
 
     @Override
     public void stopSound(@NotNull SoundStop stop) {
         // not supported in spigot
+        super.stopSound(stop);
     }
 
     @Override
     public void openBook(@NotNull Book book) {
         // not supported in spigot
+        super.openBook(book);
     }
 
     @Override
     public void sendResourcePacks(@NotNull ResourcePackRequest request) {
         // not supported in spigot
+        super.sendResourcePacks(request);
     }
 
     @Override
@@ -205,16 +240,19 @@ public class SpigotPlayerAudience implements Audience {
             @NotNull UUID... others
     ) {
         // not supported in spigot
+        super.removeResourcePacks(id, others);
     }
 
     @Override
     public void clearResourcePacks() {
         // not supported in spigot
+        super.clearResourcePacks();
     }
 
     @Override
     public void showDialog(@NotNull DialogLike dialog) {
-        // not supported in spigot
+        // not supported until adventure has native api
+        super.showDialog(dialog);
     }
 
     @Override
@@ -236,5 +274,4 @@ public class SpigotPlayerAudience implements Audience {
         return (int) (duration.getSeconds() * 20 // 20ticks/sec
                 + duration.getNano() / 50_000_000); // 50ms * 1ms/1000000ns
     }
-
 }

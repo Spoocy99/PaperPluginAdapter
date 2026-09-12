@@ -1,16 +1,17 @@
 package dev.spoocy.adapter.gui.view;
 
-import dev.spoocy.adapter.core.config.PluginConfig;
 import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.saveable.ViewProvider;
 import dev.spoocy.adapter.inventory.InventoryManager;
+import dev.spoocy.adapter.language.Localization;
 import dev.spoocy.adapter.log.BukkitLogger;
-import dev.spoocy.adapter.messages.Localization;
-import net.kyori.adventure.text.Component;
+import dev.spoocy.adapter.message.LocalizedComponent;
+import dev.spoocy.utils.common.misc.Args;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -21,9 +22,9 @@ import java.util.function.Function;
 public abstract class AbstractGuiView implements GuiView {
 
     protected final Player viewer;
-    protected Localization locale;
+    protected Locale locale;
     protected boolean closeable;
-    protected Function<Localization, Component> title;
+    protected LocalizedComponent title;
     protected boolean resetOnClose, resetOnSwitch;
     protected boolean shouldHandleClose;
     protected boolean currentlyOpen;
@@ -33,13 +34,13 @@ public abstract class AbstractGuiView implements GuiView {
 
     public AbstractGuiView(
             @NotNull Player viewer,
-            @NotNull Localization locale,
-            @NotNull Function<Localization, Component> title,
+            @NotNull Locale locale,
+            @NotNull LocalizedComponent title,
             boolean closeable
     ) {
-        this.viewer = viewer;
-        this.locale = locale;
-        this.title = title;
+        this.viewer = Args.notNull(viewer, "viewer");
+        this.locale = Args.notNull(locale, "locale");
+        this.title = Args.notNull(title, "title");
         this.closeable = closeable;
         this.resetOnClose = false;
         this.resetOnSwitch = false;
@@ -54,8 +55,13 @@ public abstract class AbstractGuiView implements GuiView {
     }
 
     @Override
-    public @NotNull Component getTitle() {
-        return this.title.apply(this.locale);
+    public Locale getLocale() {
+        return this.locale;
+    }
+
+    @Override
+    public @NotNull LocalizedComponent getTitle() {
+        return this.title;
     }
 
     @Override
@@ -123,11 +129,6 @@ public abstract class AbstractGuiView implements GuiView {
     }
 
     @Override
-    public Localization getLocale() {
-        return this.locale;
-    }
-
-    @Override
     public void setCloseable(boolean closeable) {
         this.closeable = closeable;
     }
@@ -154,12 +155,18 @@ public abstract class AbstractGuiView implements GuiView {
     }
 
     @Override
-    public void setLocale(@NotNull Localization locale) {
+    public void setPlayerLocale() {
+        this.setLocale(Localization.parseLocale(this.viewer));
+    }
+
+    @Override
+    public void setLocale(@NotNull Locale locale) {
+        Args.notNull(locale, "locale");
         if(this.locale == locale) return;
         this.locale = locale;
         updateLocale(locale);
     }
-    protected abstract void updateLocale(@NotNull Localization locale);
+    protected abstract void updateLocale(@NotNull Locale  locale);
 
     @Override
     public void onUpdate(int x, int y, @Nullable Item item, @Nullable Item previousItem) {
@@ -181,16 +188,16 @@ public abstract class AbstractGuiView implements GuiView {
 
     public abstract static class Builder<B extends GuiView.Builder<B, G>, G extends GuiView> implements GuiView.Builder<B, G> {
 
-        protected Function<Localization, Component> title;
+        protected LocalizedComponent title;
         protected boolean closeable = true;
         protected boolean resetOnClose = false;
         protected boolean resetOnSwitch = false;
-        protected Localization locale;
+        protected Locale locale;
         protected Runnable onClose, onOpen;
         protected Function<GuiView, GuiView> exitView;
 
         @Override
-        public B title(@NotNull Function<Localization, Component> title) {
+        public B title(@NotNull LocalizedComponent title) {
             this.title = title;
             return instance();
         }
@@ -209,7 +216,7 @@ public abstract class AbstractGuiView implements GuiView {
         }
 
         @Override
-        public B locale(@NotNull Localization locale) {
+        public B locale(@NotNull Locale locale) {
             this.locale = locale;
             return instance();
         }
@@ -259,9 +266,11 @@ public abstract class AbstractGuiView implements GuiView {
 
         @Override
         public @NotNull G build(@NotNull Player viewer) {
+
             if(this.locale == null) {
-                this.locale = PluginConfig.globalTranslation().playerLocale(viewer);
+                this.locale = Localization.parseLocale(viewer);
             }
+
             validate();
             G view = createGuiView(viewer);
             view.setExitView(this.exitView);

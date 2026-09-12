@@ -5,13 +5,14 @@ import dev.spoocy.adapter.gui.icon.Icon;
 import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.items.types.GuiControlItem;
 import dev.spoocy.adapter.gui.types.Gui;
-import dev.spoocy.adapter.messages.Localization;
 import dev.spoocy.adapter.sound.PSound;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.*;
+import java.util.Locale;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Basic Button to be put into the gui.
@@ -42,7 +43,7 @@ public class ControlButton<G extends Gui> extends GuiControlItem<G> {
     }
 
     @Override
-    public ItemStack getItemStack(@NotNull Localization locale) {
+    public ItemStack getItemStack(@NotNull Locale locale) {
         return this.item.apply(getGui()).decode(locale);
     }
 

@@ -1,11 +1,12 @@
 package dev.spoocy.adapter.core.config;
 
+import dev.spoocy.adapter.compatibility.AudienceProvider;
 import dev.spoocy.adapter.compatibility.CompatibilityProvider;
 import dev.spoocy.adapter.core.PluginAdapter;
-import dev.spoocy.adapter.compatibility.AudienceProvider;
-import dev.spoocy.adapter.language.GlobalTranslation;
 import dev.spoocy.adapter.message.ActionbarHandler;
-import dev.spoocy.adapter.messages.font.Font;
+import dev.spoocy.adapter.message.GlobalTranslation;
+import dev.spoocy.adapter.message.font.Font;
+import dev.spoocy.adapter.message.font.FontRegistry;
 import dev.spoocy.adapter.sound.PSound;
 import dev.spoocy.utils.config.constructor.Constructor;
 import dev.spoocy.utils.config.representer.Representer;
@@ -19,54 +20,72 @@ import org.jetbrains.annotations.NotNull;
 
 public interface PluginConfig {
 
+    @NotNull
     static TextColor baseColor() {
         return forKey(Keys.BASE_COLOR, TextColor.class);
     }
 
+    @NotNull
     static TextColor primaryColor() {
         return forKey(Keys.PRIMARY_COLOR, TextColor.class);
     }
 
+    @NotNull
     static TextColor errorColor() {
         return forKey(Keys.ERROR_COLOR, TextColor.class);
     }
 
+    @NotNull
     static PSound clickSound() {
         return forKey(Keys.CLICK_SOUND, PSound.class);
     }
 
+    @NotNull
     static PSound errorSound() {
         return forKey(Keys.ERROR_SOUND, PSound.class);
     }
 
+    @NotNull
     static Font defaultFont() {
         return forKey(Keys.DEFAULT_FONT, Font.class);
     }
 
+    @NotNull
+    static FontRegistry fonts() {
+        return forKey(Keys.FONT_REGISTRY, FontRegistry.class);
+    }
+
+    @NotNull
     static CompatibilityProvider compatibilityProvider() {
         return forKey(Keys.COMPATIBILITY, CompatibilityProvider.class);
     }
 
+    @NotNull
     static AudienceProvider audiences() {
         return compatibilityProvider().getAudienceProvider();
     }
 
+    @NotNull
     static GlobalTranslation globalTranslation() {
         return forKey(Keys.GLOBAL_TRANSLATION, GlobalTranslation.class);
     }
 
+    @NotNull
     static int spigotResourceId() {
         return forKey(Keys.SPIGOT_RESOURCE_ID, Integer.class);
     }
 
+    @NotNull
     static Constructor configConstructor() {
         return forKey(Keys.CONFIG_CONSTRUCTOR, Constructor.class);
     }
 
+    @NotNull
     static Representer configRepresenter() {
         return forKey(Keys.CONFIG_REPRESENTER, Representer.class);
     }
 
+    @NotNull
     static ActionbarHandler actionbarHandler() {
         return forKey(Keys.ACTIONBAR_HANDLER, ActionbarHandler.class);
     }
@@ -98,6 +117,7 @@ public interface PluginConfig {
         public static final NamespacedKey CLICK_SOUND = key("click_sound");
         public static final NamespacedKey ERROR_SOUND = key("error_sound");
         public static final NamespacedKey DEFAULT_FONT = key("default_font");
+        public static final NamespacedKey FONT_REGISTRY = key("font_registry");
         public static final NamespacedKey COMPATIBILITY = key("compatibility_provider");
         public static final NamespacedKey GLOBAL_TRANSLATION = key("global_translation");
         public static final NamespacedKey SPIGOT_RESOURCE_ID = key("spigot_resource_id");

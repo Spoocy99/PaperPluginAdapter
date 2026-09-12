@@ -4,12 +4,12 @@ import dev.spoocy.adapter.gui.types.Gui;
 import dev.spoocy.adapter.gui.view.GuiView;
 import dev.spoocy.adapter.gui.view.TopInventoryView;
 import dev.spoocy.adapter.inventory.CustomInventory;
-import dev.spoocy.adapter.messages.Localization;
+import dev.spoocy.adapter.message.LocalizedComponent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
+import java.util.Locale;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
@@ -19,8 +19,8 @@ public class NormalViewImpl extends TopInventoryView implements GuiView.NormalVi
 
     public NormalViewImpl(
             @NotNull Player viewer,
-            @NotNull Localization locale,
-            @NotNull Function<Localization, Component> title,
+            @NotNull Locale locale,
+            @NotNull LocalizedComponent title,
             boolean closeable,
             @NotNull Gui gui
     ) {

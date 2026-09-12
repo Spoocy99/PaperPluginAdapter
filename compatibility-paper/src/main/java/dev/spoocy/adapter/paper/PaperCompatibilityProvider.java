@@ -1,14 +1,14 @@
 package dev.spoocy.adapter.paper;
 
 import dev.spoocy.adapter.compatibility.AdvancementAccess;
-import dev.spoocy.adapter.compatibility.CompatibilityProvider;
 import dev.spoocy.adapter.compatibility.AudienceProvider;
+import dev.spoocy.adapter.compatibility.CompatibilityProvider;
 import dev.spoocy.adapter.compatibility.items.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.inventory.InventoryType;
@@ -41,12 +41,17 @@ public class PaperCompatibilityProvider implements CompatibilityProvider {
 
     @Override
     public void onEnable() {
-        this.audienceProvider.initialize();
+
     }
 
     @Override
     public void onDisable() {
-        this.audienceProvider.close();
+
+    }
+
+    @Override
+    public @NotNull ItemBuilder itemBuilder(@NotNull Material material) {
+        return new PaperItemBuilder(material);
     }
 
     @Override
@@ -70,6 +75,11 @@ public class PaperCompatibilityProvider implements CompatibilityProvider {
     }
 
     @Override
+    public <T extends Entity> T spawnEntity(@NotNull Location location, @NotNull Class<T> clazz, @Nullable Consumer<T> function) {
+        return location.getWorld().spawn(location, clazz, function);
+    }
+
+    @Override
     public Inventory createInventory(@Nullable InventoryHolder owner, int size, @NotNull Component title) {
         return Bukkit.createInventory(owner, size, title);
     }
@@ -77,11 +87,6 @@ public class PaperCompatibilityProvider implements CompatibilityProvider {
     @Override
     public Inventory createInventory(@Nullable InventoryHolder owner, @NotNull InventoryType type, @NotNull Component title) {
         return Bukkit.createInventory(owner, type, title);
-    }
-
-    @Override
-    public <T extends Entity> T spawnEntity(@NotNull Location location, @NotNull Class<T> clazz, @Nullable Consumer<T> function) {
-        return location.getWorld().spawn(location, clazz, function);
     }
 
 }

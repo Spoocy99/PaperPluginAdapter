@@ -1,6 +1,7 @@
 package dev.spoocy.adapter.gui.types;
 
 import dev.spoocy.adapter.gui.animation.Animation;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,6 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface SimpleGui extends ContentGui {
 
-    void playAnimation(@NotNull Animation<?, SimpleGui> animation);
+    void playAnimation(@NotNull Animation<?, SimpleGui> animation, @NotNull Plugin plugin);
 
 }

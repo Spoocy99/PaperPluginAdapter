@@ -1,6 +1,7 @@
 package dev.spoocy.adapter.gui.animation;
 
 import dev.spoocy.adapter.gui.types.Gui;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
@@ -22,7 +23,7 @@ public interface Animation<A extends Animation<A, G>, G extends Gui> {
 
     boolean isRunning();
 
-    void start();
+    void start(@NotNull Plugin plugin);
 
     void stop();
 

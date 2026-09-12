@@ -8,12 +8,17 @@ import dev.spoocy.adapter.gui.saveable.ViewProvider;
 import dev.spoocy.adapter.gui.types.Gui;
 import dev.spoocy.adapter.gui.view.GuiView;
 import dev.spoocy.utils.common.collections.Collector;
+import dev.spoocy.utils.common.misc.Args;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 /**
@@ -87,7 +92,10 @@ public abstract class AbstractGui implements Gui {
         return this.currentAnimation;
     }
 
-    protected <G extends Gui> void playAnimationInternally(@NotNull Animation<?, G> animation) {
+    protected <G extends Gui> void playAnimationInternally(@NotNull Animation<?, G> animation, @NotNull Plugin plugin) {
+        Args.notNull(animation, "animation");
+        Args.notNull(plugin, "plugin");
+
         G thisGui;
 
         try {
@@ -102,7 +110,7 @@ public abstract class AbstractGui implements Gui {
 
         animation.onEnd(() -> this.currentAnimation = null);
         animation.setGui(thisGui);
-        animation.start();
+        animation.start(plugin);
     }
 
     @Override

@@ -4,12 +4,12 @@ import dev.spoocy.adapter.gui.types.Gui;
 import dev.spoocy.adapter.gui.view.GuiView;
 import dev.spoocy.adapter.gui.view.TopInventoryView;
 import dev.spoocy.adapter.inventory.CustomInventory;
-import dev.spoocy.adapter.messages.Localization;
+import dev.spoocy.adapter.message.LocalizedComponent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
+import java.util.Locale;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 public class DropperViewImpl extends TopInventoryView implements GuiView.DropperView {
 
-    public DropperViewImpl(@NotNull Player viewer, @NotNull Localization locale, @NotNull Function<Localization, Component> title, boolean closeable, @NotNull Gui gui) {
+    public DropperViewImpl(@NotNull Player viewer, @NotNull Locale locale, @NotNull LocalizedComponent title, boolean closeable, @NotNull Gui gui) {
         super(viewer, locale, title, closeable, gui);
         if(gui.getWidth() > 3 || gui.getHeight() > 3) {
             throw new IllegalArgumentException("DropperView can only support a maximum size of 3x3");

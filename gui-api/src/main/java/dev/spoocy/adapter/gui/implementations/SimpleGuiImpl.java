@@ -1,12 +1,13 @@
 package dev.spoocy.adapter.gui.implementations;
 
 import dev.spoocy.adapter.gui.animation.Animation;
+import dev.spoocy.adapter.gui.content.GuiItemProvider;
 import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.layout.Coordinate;
-import dev.spoocy.adapter.gui.content.GuiItemProvider;
 import dev.spoocy.adapter.gui.layout.builder.CharLayout;
 import dev.spoocy.adapter.gui.layout.builder.Layout;
 import dev.spoocy.adapter.gui.types.SimpleGui;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -27,8 +28,8 @@ public class SimpleGuiImpl extends ContentItemGui implements SimpleGui {
     }
 
     @Override
-    public void playAnimation(@NotNull Animation<?, SimpleGui> animation) {
-        this.playAnimationInternally(animation);
+    public void playAnimation(@NotNull Animation<?, SimpleGui> animation, @NotNull Plugin plugin) {
+        this.playAnimationInternally(animation, plugin);
     }
 
     @Override

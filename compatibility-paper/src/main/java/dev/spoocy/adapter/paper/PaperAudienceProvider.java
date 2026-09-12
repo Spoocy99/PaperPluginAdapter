@@ -19,9 +19,6 @@ import java.util.UUID;
 public class PaperAudienceProvider implements AudienceProvider {
 
     @Override
-    public void initialize() { }
-
-    @Override
     public Audience all() {
         return Bukkit.getServer();
     }
@@ -57,7 +54,4 @@ public class PaperAudienceProvider implements AudienceProvider {
     public Iterable<? extends Audience> world(@NotNull World world) {
         return world.getPlayers();
     }
-
-    @Override
-    public void close() { }
 }

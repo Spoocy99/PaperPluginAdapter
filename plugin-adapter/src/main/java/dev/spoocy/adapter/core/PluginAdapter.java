@@ -1,12 +1,17 @@
 package dev.spoocy.adapter.core;
 
+import dev.spoocy.adapter.compatibility.CompatibilityProvider;
 import dev.spoocy.adapter.config.ConfigManager;
 import dev.spoocy.adapter.core.config.DefaultPluginConfig;
 import dev.spoocy.adapter.core.config.PluginConfig;
 import dev.spoocy.adapter.core.config.PluginSetup;
 import dev.spoocy.adapter.core.load.RequirementsChecker;
 import dev.spoocy.adapter.event.EventWaiter;
-import dev.spoocy.adapter.log.*;
+import dev.spoocy.adapter.inventory.InventoryManager;
+import dev.spoocy.adapter.log.BukkitLogger;
+import dev.spoocy.adapter.log.LoggingPlugin;
+import dev.spoocy.adapter.log.PluginLogger;
+import dev.spoocy.adapter.log.PluginLoggerImpl;
 import dev.spoocy.adapter.scheduler.BukkitScheduler;
 import dev.spoocy.adapter.spigot.SpigotUpdateChecker;
 import dev.spoocy.utils.common.misc.FileUtils;
@@ -24,6 +29,7 @@ import dev.spoocy.utils.security.SecurityManager;
 import dev.spoocy.utils.security.SecurityTest;
 import dev.spoocy.utils.security.report.SecurityReport;
 import dev.spoocy.utils.security.report.TestContext;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -44,12 +50,12 @@ import java.util.List;
  * @author Spoocy99 | GitHub: Spoocy99
  */
 
-public abstract class PluginAdapter extends JavaPlugin {
+public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin {
 
     private static PluginAdapter INSTANCE;
 
     public static PluginAdapter getInstance() {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             throw new IllegalStateException("Instance call before init!");
         }
 
@@ -94,7 +100,8 @@ public abstract class PluginAdapter extends JavaPlugin {
     @NotNull
     public PluginConfig getConfiguration() {
         if (this.configuration == null) {
-            throw new IllegalStateException("Configuration accessed before it was initialized! Make sure to only access the configuration after it was set in createPlugin() method.");
+            throw new IllegalStateException(
+                    "Configuration accessed before it was initialized! Make sure to only access the configuration after it was set in createPlugin() method.");
         }
         return this.configuration;
     }
@@ -140,6 +147,16 @@ public abstract class PluginAdapter extends JavaPlugin {
         checkRelocation();
         this.bukkitScheduler = new BukkitScheduler(this);
 
+        // parse version from description
+        String version = getDescription().getVersion();
+        try {
+            this.pluginVersion = Version.parse(version);
+        } catch (Throwable e) {
+            BukkitLogger.error("Failed to parse plugin version ({})! Plugin will shut down.", version, e);
+            setError("Failed to parse plugin version: " + e.getMessage());
+            return;
+        }
+
         DefaultPluginConfig config = DefaultPluginConfig.create(this);
 
         try {
@@ -169,22 +186,14 @@ public abstract class PluginAdapter extends JavaPlugin {
             BukkitLogger.info("First launch of plugin detected.");
         }
 
-        String version = getDescription().getVersion();
-        try {
-            this.pluginVersion = Version.parse(version);
-        } catch (Throwable e) {
-            BukkitLogger.error("Failed to parse plugin version ({})! Plugin will shut down.", version, e);
-            setError("Failed to parse plugin version: " + e.getMessage());
-            return;
-        }
-
         if (!runSecurityTests(SecurityTest.Stage.INIT)) {
             return;
         }
 
         this.eventWaiter = new EventWaiter(this);
 
-        PluginConfig.compatibilityProvider().onLoad();
+        CompatibilityProvider provider = PluginConfig.compatibilityProvider();
+        provider.onLoad();
 
         int spigotResourceId = PluginConfig.spigotResourceId();
         if (spigotResourceId > 0) {
@@ -219,8 +228,10 @@ public abstract class PluginAdapter extends JavaPlugin {
             return;
         }
 
-        PluginConfig.compatibilityProvider()
-                .onEnable();
+        PluginConfig.compatibilityProvider().onEnable();
+
+        InventoryManager.onEnable(this, PluginConfig::compatibilityProvider);
+
         this.listeners.forEach(this::registerListener);
 
         try {
@@ -247,6 +258,7 @@ public abstract class PluginAdapter extends JavaPlugin {
             BukkitLogger.error("Error during plugin disable phase.", e);
         }
 
+        InventoryManager.onDisable();
         PluginConfig.compatibilityProvider().onDisable();
     }
 
@@ -278,7 +290,7 @@ public abstract class PluginAdapter extends JavaPlugin {
 
         for (TestContext context : report.getTests()) {
 
-            if(context.getResult() == CheckResult.KILL_PROGRAM) {
+            if (context.getResult() == CheckResult.KILL_PROGRAM) {
                 setError(context.getDetails());
                 return false;
             }
@@ -344,11 +356,23 @@ public abstract class PluginAdapter extends JavaPlugin {
 
     private PluginLogger logger;
 
-    @NotNull
-    public PluginLogger logger() {
+    @Override
+    public @NotNull PluginLogger logger() {
         if (this.logger == null) {
-            this.logger = new PluginLoggerImpl(this);
+
+            String prefix = this.getDescription().getPrefix();
+            if (prefix == null) {
+                prefix = this.getDescription().getName();
+            }
+
+            this.logger = new PluginLoggerImpl(
+                    this.getLogger(),
+                    prefix,
+                    MiniMessage.miniMessage(),
+                    PluginLoggerImpl.DEFAULT_PLAIN_SERIALIZER
+            );
         }
+
         return this.logger;
     }
 
@@ -411,7 +435,8 @@ public abstract class PluginAdapter extends JavaPlugin {
     }
 
     @NotNull
-    public Document loadConfig(@NotNull Resource resource, boolean requireExists, @Nullable ConfigUpdater updater) throws IOException {
+    public Document loadConfig(@NotNull Resource resource, boolean requireExists, @Nullable ConfigUpdater updater)
+            throws IOException {
         return this.configManager.loadConfigFile(resource, requireExists, updater);
     }
 
@@ -436,7 +461,8 @@ public abstract class PluginAdapter extends JavaPlugin {
         resourcePath = resourcePath.replace('\\', '/');
         InputStream in = FileUtils.getResource(this.getClass(), resourcePath);
         if (in == null) {
-            throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + FileUtils.getJarFile(this.getClass()));
+            throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + FileUtils.getJarFile(
+                    this.getClass()));
         }
 
         File outFile = new File(this.getDataFolder(), outPath);
@@ -480,14 +506,18 @@ public abstract class PluginAdapter extends JavaPlugin {
         }
         getServer().getPluginManager()
                 .registerEvents(listener, this);
-        BukkitLogger.trace("Registered Listener Class '{}'.", listener.getClass()
-                .getSimpleName());
+        BukkitLogger.trace(
+                "Registered Listener Class '{}'.", listener.getClass()
+                        .getSimpleName()
+        );
     }
 
     public void unregisterListener(@NotNull Listener listener) {
         HandlerList.unregisterAll(listener);
-        BukkitLogger.trace("Unregistered Listener Class '{}'.", listener.getClass()
-                .getSimpleName());
+        BukkitLogger.trace(
+                "Unregistered Listener Class '{}'.", listener.getClass()
+                        .getSimpleName()
+        );
     }
 
     public void callEvent(@NotNull Event event) {
@@ -502,12 +532,6 @@ public abstract class PluginAdapter extends JavaPlugin {
         Bukkit.getScheduler().runTask(this, () -> callEvent(event));
     }
 
-    @Nullable
-    public static PluginAdapter getProvider(@NotNull Class<?> clazz) {
-        JavaPlugin provider = JavaPlugin.getProvidingPlugin(clazz);
-        return provider instanceof PluginAdapter ? (PluginAdapter) provider : null;
-    }
-
     private void checkRelocation() {
         String property = System.getProperty("pluginadapter.relocatecheck");
         if (property != null && property.equals("false")) {
@@ -518,7 +542,8 @@ public abstract class PluginAdapter extends JavaPlugin {
         String current = PluginAdapter.class.getPackage()
                 .getName();
         if (current.equals(defaultPackage) || current.startsWith(defaultPackage + ".")) {
-            throw new IllegalStateException("Paper Adapter has not been relocated correctly! Make sure this library is shaded and relocated in your plugin's build configuration. (Currently: " + current + ")");
+            throw new IllegalStateException(
+                    "Paper Adapter has not been relocated correctly! Make sure this library is shaded and relocated in your plugin's build configuration. (Currently: " + current + ")");
         }
     }
 

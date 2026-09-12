@@ -1,9 +1,9 @@
 package dev.spoocy.adapter.gui.animation;
 
-import dev.spoocy.adapter.core.PluginAdapter;
 import dev.spoocy.adapter.gui.types.Gui;
 import dev.spoocy.adapter.log.BukkitLogger;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,14 +62,14 @@ public abstract class AbstractAnimation<A extends AbstractAnimation<A, G>, G ext
     }
 
     @Override
-    public void start() {
+    public void start(@NotNull Plugin plugin) {
         if (this.gui == null) throw new IllegalStateException("Animation not bound to GUI");
         if (this.isRunning()) cancelAnimation();
 
         this.onStart();
 
         task = Bukkit.getScheduler().runTaskTimer(
-                PluginAdapter.getInstance(), () -> {
+                plugin, () -> {
                     if (this.gui.getViewers().length == 0) {
                         this.noViewerTicks++;
 

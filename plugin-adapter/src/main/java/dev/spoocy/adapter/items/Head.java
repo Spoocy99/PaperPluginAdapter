@@ -1,15 +1,11 @@
 package dev.spoocy.adapter.items;
 
-import dev.spoocy.adapter.compatibility.items.SkullBuilder;
+import dev.spoocy.adapter.compatibility.items.ItemBuilder;
 import net.kyori.adventure.text.object.ObjectContents;
 import net.kyori.adventure.text.object.PlayerHeadObjectContents;
-import net.kyori.adventure.text.object.SpriteObjectContents;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
-
-import java.util.UUID;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
@@ -91,8 +87,8 @@ public enum Head {
 
     @Contract(" -> new")
     @NotNull
-    public SkullBuilder builder() {
-        return Items.skull().textureBase64(texture);
+    public ItemBuilder builder() {
+        return Items.skull().skullTextureBase64(texture);
     }
 
 

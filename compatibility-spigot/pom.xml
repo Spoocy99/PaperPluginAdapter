@@ -7,7 +7,7 @@
     <parent>
         <groupId>dev.spoocy.adapter</groupId>
         <artifactId>PaperAdapter</artifactId>
-        <version>1.0.12</version>
+        <version>1.0.13</version>
     </parent>
 
     <artifactId>compatibility-spigot</artifactId>
@@ -36,13 +36,8 @@
         </dependency>
 
         <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-serializer-gson</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-serializer-legacy</artifactId>
+            <groupId>dev.spoocy.adapter</groupId>
+            <artifactId>bungee-serializer</artifactId>
         </dependency>
 
     </dependencies>

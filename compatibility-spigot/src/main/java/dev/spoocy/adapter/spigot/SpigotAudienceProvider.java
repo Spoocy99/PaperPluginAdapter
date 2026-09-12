@@ -21,7 +21,11 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.io.Closeable;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -29,9 +33,7 @@ import java.util.function.Consumer;
  * @author Spoocy99 | GitHub: Spoocy99
  */
 
-public class SpigotAudienceProvider implements AudienceProvider, Listener {
-
-    public static final Locale DEFAULT_LOCALE = Locale.US;
+public class SpigotAudienceProvider implements AudienceProvider, Listener, Closeable {
 
     private final Plugin plugin;
 
@@ -66,7 +68,6 @@ public class SpigotAudienceProvider implements AudienceProvider, Listener {
         addViewer(plugin.getServer().getConsoleSender());
     }
 
-    @Override
     public void initialize() {
         this.registerEvent(PlayerJoinEvent.class, EventPriority.LOWEST, event -> this.addViewer(event.getPlayer()));
         this.registerEvent(PlayerQuitEvent.class, EventPriority.MONITOR, event -> this.removeViewer(event.getPlayer()));

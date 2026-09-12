@@ -1,8 +1,9 @@
 package dev.spoocy.adapter.core.config;
 
 import dev.spoocy.adapter.compatibility.CompatibilityProvider;
-import dev.spoocy.adapter.language.GlobalTranslation;
 import dev.spoocy.adapter.message.ActionbarHandler;
+import dev.spoocy.adapter.message.GlobalTranslation;
+import dev.spoocy.adapter.message.font.FontRegistry;
 import dev.spoocy.utils.config.constructor.Constructor;
 import dev.spoocy.utils.config.representer.Representer;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,8 @@ public interface PluginSetup {
     void setCompatibilityProvider(@NotNull CompatibilityProvider compatibilityProvider);
 
     void setGlobalTranslation(@NotNull GlobalTranslation translation);
+
+    void setFontRegistry(@NotNull FontRegistry registry);
 
     void addSpigotUpdateChecker(int spigotResourceId);
 

@@ -6,6 +6,7 @@ import dev.spoocy.utils.common.version.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,14 +36,40 @@ public class SpigotUpdateChecker {
         return this.currentVersion;
     }
 
-    public SpigotUpdateChecker retrieveNewestVersion(Consumer<Version> consumer) {
+    /**
+     * Determines whether the newest version information has been fetched.
+     *
+     * @return {@code true} if the newest version has been successfully fetched; {@code false} otherwise.
+     */
+    public boolean wasNewestFetched() {
+        return this.newestRelease != null;
+    }
+
+    /**
+     * Fetches the newest available version if it has already been retrieved.
+     * If the newest version has not been fetched yet, this method returns null.
+     * <p>
+     * You should probably first call {@link #retrieveNewestVersion}
+     *
+     * @return The newest fetched version or null.
+     */
+    @Nullable
+    public Version getNewestVersionIfFetched() {
+        if(this.newestRelease == null) {
+            return null;
+        }
+
+        return this.newestRelease;
+    }
+
+    public SpigotUpdateChecker retrieveNewestVersion(@NotNull Consumer<Version> consumer) {
         getVersion(version -> {
             consumer.accept(newestRelease);
         });
         return this;
     }
 
-    public SpigotUpdateChecker whenNewest(final Consumer<Version> consumer) {
+    public SpigotUpdateChecker whenNewest(@NotNull Consumer<Version> consumer) {
         getVersion(version -> {
             if(this.currentVersion.equals(this.newestRelease)) {
                 consumer.accept(newestRelease);
@@ -51,7 +78,7 @@ public class SpigotUpdateChecker {
         return this;
     }
 
-    public SpigotUpdateChecker whenNewer(final Consumer<Version> consumer) {
+    public SpigotUpdateChecker whenNewer(@NotNull Consumer<Version> consumer) {
         getVersion(version -> {
             if(this.currentVersion.isNewerThan(this.newestRelease)) {
                 consumer.accept(newestRelease);
@@ -60,7 +87,7 @@ public class SpigotUpdateChecker {
         return this;
     }
 
-    public SpigotUpdateChecker whenOlder(final Consumer<Version> consumer) {
+    public SpigotUpdateChecker whenOlder(@NotNull Consumer<Version> consumer) {
         getVersion(version -> {
             if(this.currentVersion.isOlderThan(this.newestRelease)) {
                 consumer.accept(newestRelease);
@@ -69,7 +96,7 @@ public class SpigotUpdateChecker {
         return this;
     }
 
-    private void getVersion(final Consumer<Version> consumer) {
+    private void getVersion(@NotNull Consumer<Version> consumer) {
         if(newestRelease == null) {
             fetchVersion(version -> {
                 this.newestRelease = Version.parse(version);
@@ -78,10 +105,10 @@ public class SpigotUpdateChecker {
             return;
         }
 
-        consumer.accept(newestRelease);
+        consumer.accept(this.newestRelease);
     }
 
-    private void fetchVersion(final Consumer<String> consumer) {
+    private void fetchVersion(@NotNull Consumer<String> consumer) {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId).openStream(); Scanner scanner = new Scanner(inputStream)) {
                 if (scanner.hasNext()) {

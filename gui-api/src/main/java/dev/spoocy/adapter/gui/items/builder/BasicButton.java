@@ -4,12 +4,12 @@ import dev.spoocy.adapter.gui.click.Click;
 import dev.spoocy.adapter.gui.icon.Icon;
 import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.items.types.GuiButton;
-import dev.spoocy.adapter.messages.Localization;
 import dev.spoocy.adapter.sound.PSound;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.function.Function;
 
 /**
@@ -41,7 +41,7 @@ public class BasicButton extends GuiButton {
     }
 
     @Override
-    public ItemStack getItemStack(@NotNull Localization locale) {
+    public ItemStack getItemStack(@NotNull Locale locale) {
         return this.icon.decode(locale);
     }
 

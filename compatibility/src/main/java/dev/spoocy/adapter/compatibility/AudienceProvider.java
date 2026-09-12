@@ -6,19 +6,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Closeable;
 import java.util.UUID;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
  */
 
-public interface AudienceProvider extends Closeable {
-
-    void initialize();
-
-    @Override
-    void close();
+public interface AudienceProvider {
 
     Audience all();
 

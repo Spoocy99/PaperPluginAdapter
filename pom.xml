@@ -6,21 +6,25 @@
 
     <groupId>dev.spoocy.adapter</groupId>
     <artifactId>PaperAdapter</artifactId>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>plugin-adapter</module>
+        <module>logging</module>
+        <module>localization</module>
+        <module>sound</module>
+        <module>registries</module>
+        <module>gui-api</module>
         <module>reflection-api</module>
+        <module>bungee-serializer</module>
         <module>compatibility</module>
         <module>compatibility-spigot</module>
         <module>compatibility-paper</module>
-        <module>gui-api</module>
-        <module>message-wrapper</module>
     </modules>
 
     <properties>
-        <utils.version>1.0.13</utils.version>
+        <utils.version>1.0.14</utils.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,13 +85,43 @@
 
             <dependency>
                 <groupId>dev.spoocy.adapter</groupId>
+                <artifactId>logging</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.spoocy.adapter</groupId>
+                <artifactId>localization</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.spoocy.adapter</groupId>
+                <artifactId>registries</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.spoocy.adapter</groupId>
+                <artifactId>sound</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.spoocy.adapter</groupId>
+                <artifactId>bungee-serializer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.spoocy.adapter</groupId>
                 <artifactId>compatibility</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.spoocy.adapter</groupId>
-                <artifactId>message-wrapper</artifactId>
+                <artifactId>gui-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -100,7 +134,7 @@
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>26.2.build.111-stable</version>
+                <version>26.2.build.121-stable</version>
             </dependency>
 
             <dependency>

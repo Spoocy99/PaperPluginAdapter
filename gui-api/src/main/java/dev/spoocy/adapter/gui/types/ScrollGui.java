@@ -1,6 +1,7 @@
 package dev.spoocy.adapter.gui.types;
 
 import dev.spoocy.adapter.gui.animation.Animation;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnegative;
@@ -24,6 +25,6 @@ public interface ScrollGui extends ContentGui, Resetable {
 
     void scrollBackward(@Nonnegative int amount);
 
-    void playAnimation(@NotNull Animation<?, ScrollGui> animation);
+    void playAnimation(@NotNull Animation<?, ScrollGui> animation, @NotNull Plugin plugin);
 
 }

@@ -7,7 +7,7 @@
     <parent>
         <groupId>dev.spoocy.adapter</groupId>
         <artifactId>PaperAdapter</artifactId>
-        <version>1.0.12</version>
+        <version>1.0.13</version>
     </parent>
 
     <artifactId>gui-api</artifactId>
@@ -28,12 +28,23 @@
 
         <dependency>
             <groupId>dev.spoocy.adapter</groupId>
-            <artifactId>plugin-adapter</artifactId>
+            <artifactId>logging</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.adapter</groupId>
+            <artifactId>localization</artifactId>
         </dependency>
 
         <dependency>
             <groupId>dev.spoocy.adapter</groupId>
             <artifactId>compatibility</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.spoocy.adapter</groupId>
+            <artifactId>sound</artifactId>
         </dependency>
 
         <dependency>

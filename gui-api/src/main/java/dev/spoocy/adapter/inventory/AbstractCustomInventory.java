@@ -1,6 +1,5 @@
 package dev.spoocy.adapter.inventory;
 
-import dev.spoocy.adapter.compatibility.annotations.CompatibilityProvided;
 import dev.spoocy.adapter.log.BukkitLogger;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.HumanEntity;
@@ -97,10 +96,6 @@ public abstract class AbstractCustomInventory extends CustomInventoryWrapper {
         //InventoryManager.INSTANCE.setListen(this, listening);
     }
 
-    @CompatibilityProvided(
-            paper = true,
-            spigot = true
-    )
     @Override
     public int close() {
         int i = 0;

@@ -4,14 +4,14 @@ import dev.spoocy.adapter.gui.click.Click;
 import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.items.types.GuiItem;
 import dev.spoocy.adapter.gui.layout.slot.Slot;
-import dev.spoocy.adapter.items.Head;
-import dev.spoocy.adapter.messages.Localization;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -26,13 +26,13 @@ public class BasicGuiItem extends GuiItem {
         return new Builder();
     }
 
-    private final Function<Localization, ItemStack> item;
+    private final Function<Locale, ItemStack> item;
     private final Consumer<Click> runnable;
     private final InventoryAction[] allowedActions;
     private final ClickType[] allowedClickTypes;
 
     public BasicGuiItem(
-            @NotNull Function<Localization, ItemStack> item,
+            @NotNull Function<Locale, ItemStack> item,
             @NotNull Consumer<Click> handle,
             @NotNull InventoryAction[] allowedActions,
             @NotNull ClickType[] allowedClickTypes
@@ -49,7 +49,7 @@ public class BasicGuiItem extends GuiItem {
     }
 
     @Override
-    public ItemStack getItemStack(@NotNull Localization locale) {
+    public ItemStack getItemStack(@NotNull Locale locale) {
         return this.item.apply(locale);
     }
 
@@ -80,14 +80,14 @@ public class BasicGuiItem extends GuiItem {
 
     private static class Builder implements GuiItemBuilder.BasicBuilder {
 
-        private Function<Localization, ItemStack> itemStack;
+        private Function<Locale, ItemStack> itemStack;
         private Consumer<Click> runnable;
         private InventoryAction[] allowedActions = Slot.NO_ACTIONS;
         private ClickType[] allowedClickTypes = Slot.NO_CLICK_TYPES;
 
         public Builder() {
             super();
-            this.itemStack = l -> Head.UNKNOWN.builder().build();
+            this.itemStack = l -> new ItemStack(Material.PAPER);
         }
 
         @Override
@@ -103,7 +103,7 @@ public class BasicGuiItem extends GuiItem {
         }
 
         @Override
-        public BasicBuilder item(@NotNull Function<Localization, ItemStack> itemStack) {
+        public BasicBuilder item(@NotNull Function<Locale, ItemStack> itemStack) {
             this.itemStack = itemStack;
             return this;
         }

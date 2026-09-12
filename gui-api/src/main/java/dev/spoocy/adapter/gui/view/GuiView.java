@@ -1,14 +1,12 @@
 package dev.spoocy.adapter.gui.view;
 
-import dev.spoocy.adapter.core.config.PluginConfig;
 import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.layout.slot.GuiChangeSubscriber;
 import dev.spoocy.adapter.gui.saveable.ViewProvider;
 import dev.spoocy.adapter.gui.types.Gui;
 import dev.spoocy.adapter.gui.view.impl.DropperViewImpl;
 import dev.spoocy.adapter.gui.view.impl.NormalViewImpl;
-import dev.spoocy.adapter.messages.Localization;
-import dev.spoocy.adapter.messages.PluginMessage;
+import dev.spoocy.adapter.message.LocalizedComponent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -16,6 +14,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.function.Function;
 
 /**
@@ -60,15 +59,21 @@ public interface GuiView extends GuiChangeSubscriber {
     GuiView exit();
 
     @NotNull
-    Component getTitle();
+    LocalizedComponent getTitle();
 
-    Localization getLocale();
+    Locale getLocale();
 
-    void setLocale(@NotNull Localization locale);
+    /**
+     * Sets the {@link Locale language} of the view.
+     *
+     * @param glocale the locale to set for this view
+     */
+    void setLocale(@NotNull Locale glocale);
 
-    default void setPlayerLocale() {
-        setLocale(PluginConfig.globalTranslation().playerLocale(getViewer()));
-    }
+    /**
+     * Sets the {@link Locale language} of the view to the viewer's current locale.
+     */
+    void setPlayerLocale();
 
     boolean isCloseable();
 
@@ -81,7 +86,7 @@ public interface GuiView extends GuiChangeSubscriber {
     /**
      * Sets whether to reset the view when it is closed or switched to another view.
      *
-     * @param onClose whether to reset the view is closed
+     * @param onClose  whether to reset the view is closed
      * @param onSwitch whether to reset the view is closed due to switching to another view
      */
     void setResetWhen(boolean onClose, boolean onSwitch);
@@ -121,21 +126,24 @@ public interface GuiView extends GuiChangeSubscriber {
     interface Builder<B extends Builder<B, G>, G extends GuiView> {
 
         default B title(@NotNull Component title) {
-            return title(localization -> title);
+            return title(LocalizedComponent.of(title));
         }
 
-        default B title(@NotNull PluginMessage title) {
-            return title(title::cmp);
-        }
+        B title(@NotNull LocalizedComponent title);
 
-        B title(@NotNull Function<Localization, Component> title);
-
+        /**
+         * Sets whether the view is closeable.
+         *
+         * @param closeable {@link true} if the view should be closeable, {@link false} otherwise
+         *
+         * @return the builder instance
+         */
         B closeable(boolean closeable);
 
         /**
          * Sets whether to reset the view when it is closed or switched to another view.
          *
-         * @param onClose whether to reset the gui when the view is closed
+         * @param onClose  whether to reset the gui when the view is closed
          * @param onSwitch whether to reset the gui when the view is closed due to switching to another view
          *
          * @return builder
@@ -161,7 +169,7 @@ public interface GuiView extends GuiChangeSubscriber {
          *
          * @return builder
          */
-        B locale(@NotNull Localization locale);
+        B locale(@NotNull Locale locale);
 
         /**
          * Sets the view to open when exiting this view.

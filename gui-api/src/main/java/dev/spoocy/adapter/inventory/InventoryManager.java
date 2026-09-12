@@ -1,41 +1,84 @@
 package dev.spoocy.adapter.inventory;
 
-import dev.spoocy.adapter.core.PluginAdapter;
-import dev.spoocy.adapter.event.ListenAdapter;
+import dev.spoocy.adapter.compatibility.CompatibilityProvider;
 import dev.spoocy.adapter.gui.saveable.PlayerViewProvider;
 import dev.spoocy.adapter.gui.view.GuiView;
 import dev.spoocy.adapter.log.BukkitLogger;
 import dev.spoocy.adapter.log.LogAs;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
  */
 
 @LogAs("InventoryManager")
-public class InventoryManager implements ListenAdapter {
+public class InventoryManager implements Listener {
 
     public static final InventoryManager INSTANCE = new InventoryManager();
 
-    static {
-        PluginAdapter.getInstance().registerListener(INSTANCE);
+    public static void onEnable(@NotNull Plugin plugin, @NotNull Supplier<CompatibilityProvider> factory) {
+        INSTANCE.init(plugin, factory);
+    }
+
+    public static void onDisable() {
+        INSTANCE.shutdown();
     }
 
     //private final Map<Inventory, CustomInventory> HANDLER_MAP = new HashMap<>();
     private final Map<Player, GuiView> currentlyOpen = new HashMap<>();
     private final Set<PlayerViewProvider<?>> clearOnDisconnect = new HashSet<>();
 
-    public InventoryManager() { }
+    private Plugin plugin;
+    private Supplier<CompatibilityProvider> factory;
+
+    private InventoryManager() { }
+
+    @NotNull
+    public Plugin getInitializerPlugin() {
+        if(this.plugin == null) {
+            throw new IllegalStateException("InventoryManager has not been loaded! Use InventoryManager.onLoad(Plugin, Factory)");
+        }
+        return this.plugin;
+    }
+
+    @NotNull
+    public CompatibilityProvider getFactory() {
+        if(this.factory == null) {
+            throw new IllegalStateException("InventoryManager has not been loaded! Use InventoryManager.onLoad(Plugin, Factory)");
+        }
+        return this.factory.get();
+    }
+
+    public void init(@NotNull Plugin plugin, @NotNull Supplier<CompatibilityProvider> factory) {
+         if(this.plugin != null) return;
+        this.plugin = plugin;
+        this.factory = factory;
+        Bukkit.getPluginManager().registerEvents(INSTANCE, plugin);
+    }
+
+    public void shutdown() {
+        if(this.plugin == null) return;
+        this.plugin = null;
+        HandlerList.unregisterAll(INSTANCE);
+    }
 
 //    public void setListen(@NotNull CustomInventory inventory, boolean listen) {
 //        Inventory bukkit = inventory.getInventory();

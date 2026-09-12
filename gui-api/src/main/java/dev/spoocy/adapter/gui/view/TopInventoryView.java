@@ -5,16 +5,16 @@ import dev.spoocy.adapter.gui.layout.Coordinate;
 import dev.spoocy.adapter.gui.types.Gui;
 import dev.spoocy.adapter.gui.types.Resetable;
 import dev.spoocy.adapter.log.BukkitLogger;
-import dev.spoocy.adapter.messages.Localization;
-import net.kyori.adventure.text.Component;
+import dev.spoocy.adapter.message.LocalizedComponent;
+import dev.spoocy.utils.common.misc.Args;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
@@ -26,12 +26,14 @@ public abstract class TopInventoryView extends AbstractInventoryView implements 
 
     public TopInventoryView(
             @NotNull Player viewer,
-            @NotNull Localization locale,
-            @NotNull Function<Localization, Component> title,
+            @NotNull Locale locale,
+            @NotNull LocalizedComponent title,
             boolean closeable,
             @NotNull Gui gui
     ) {
         super(viewer, locale, title, closeable);
+
+        Args.notNull(gui, "gui");
 
         validateGui(gui);
         this.applyGui(gui);
@@ -46,7 +48,7 @@ public abstract class TopInventoryView extends AbstractInventoryView implements 
 
     @Override
     public void setGui(@NotNull Gui gui) {
-        if(this.gui == gui) return;
+        Args.notNull(gui, "gui");
         validateGui(gui);
 
         if(this.gui != null) {
