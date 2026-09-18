@@ -29,48 +29,48 @@ public interface PluginLogger {
 
     void sendToListeningConsoles(@NotNull Component component);
 
-    void trace(final @NotNull Marker marker, final @NotNull Component message, final @NotNull Object... args);
+    void trace(@NotNull Marker marker, @NotNull Component message, final Object... args);
 
-    void trace(final @NotNull Marker marker, final @NotNull String message, final @NotNull Object... args);
+    void trace(@NotNull Marker marker, final @NotNull String message, final Object... args);
 
-    void trace(final @NotNull Class<?> location, final @NotNull Component message, final @NotNull Object... args);
+    void trace(@NotNull Class<?> location, final @NotNull Component message, final Object... args);
 
-    void trace(final @NotNull Class<?> location, final @NotNull String message, final @NotNull Object... args);
-
-
-    void debug(final @NotNull Marker marker, final @NotNull Component message, final @NotNull Object... args);
-
-    void debug(final @NotNull Marker marker, final @NotNull String message, final @NotNull Object... args);
-
-    void debug(final @NotNull Class<?> location, final @NotNull Component message, final @NotNull Object... args);
-
-    void debug(final @NotNull Class<?> location, final @NotNull String message, final @NotNull Object... args);
+    void trace(@NotNull Class<?> location, final @NotNull String message, final Object... args);
 
 
-    void info(final @NotNull Marker marker, final @NotNull Component message, final @NotNull Object... args);
+    void debug(@NotNull Marker marker, @NotNull Component message, final Object... args);
 
-    void info(final @NotNull Marker marker, final @NotNull String message, final @NotNull Object... args);
+    void debug(@NotNull Marker marker, @NotNull String message, final Object... args);
 
-    void info(final @NotNull Class<?> location, final @NotNull Component message, final @NotNull Object... args);
+    void debug(@NotNull Class<?> location, @NotNull Component message, final Object... args);
 
-    void info(final @NotNull Class<?> location, final @NotNull String message, final @NotNull Object... args);
-
-
-    void warn(final @NotNull Marker marker, final @NotNull Component message, final @NotNull Object... args);
-
-    void warn(final @NotNull Marker marker, final @NotNull String message, final @NotNull Object... args);
-
-    void warn(final @NotNull Class<?> location, final @NotNull Component message, final @NotNull Object... args);
-
-    void warn(final @NotNull Class<?> location, final @NotNull String message, final @NotNull Object... args);
+    void debug(@NotNull Class<?> location, @NotNull String message, final Object... args);
 
 
-    void error(final @NotNull Marker marker, final @NotNull Component message, final @NotNull Object... args);
+    void info(@NotNull Marker marker, @NotNull Component message, final Object... args);
 
-    void error(final @NotNull Marker marker, final @NotNull String message, final @NotNull Object... args);
+    void info(@NotNull Marker marker, @NotNull String message, final Object... args);
 
-    void error(final @NotNull Class<?> location, final @NotNull Component message, final @NotNull Object... args);
+    void info(@NotNull Class<?> location, @NotNull Component message, final Object... args);
 
-    void error(final @NotNull Class<?> location, final @NotNull String message, final @NotNull Object... args);
+    void info(@NotNull Class<?> location, @NotNull String message, final Object... args);
+
+
+    void warn(@NotNull Marker marker, @NotNull Component message, final Object... args);
+
+    void warn(@NotNull Marker marker, @NotNull String message, final Object... args);
+
+    void warn(@NotNull Class<?> location, @NotNull Component message, final Object... args);
+
+    void warn(@NotNull Class<?> location, @NotNull String message, final Object... args);
+
+
+    void error(@NotNull Marker marker, @NotNull Component message, final Object... args);
+
+    void error(@NotNull Marker marker, @NotNull String message, final Object... args);
+
+    void error(@NotNull Class<?> location, @NotNull Component message, final Object... args);
+
+    void error(@NotNull Class<?> location, @NotNull String message, final Object... args);
 
 }

@@ -1,6 +1,7 @@
 package dev.spoocy.adapter.message.serialization;
 
 import dev.spoocy.adapter.message.MessageLike;
+import dev.spoocy.adapter.message.font.FontRegistry;
 import dev.spoocy.adapter.message.style.MessageStyle;
 import net.kyori.adventure.builder.AbstractBuilder;
 import net.kyori.adventure.text.Component;
@@ -46,7 +47,7 @@ public interface PluginMessageStyleRenderer {
 
     interface Builder extends AbstractBuilder<PluginMessageStyleRenderer> {
 
-        Builder wrapper(@NotNull ComponentLineWrapper wrapper);
+        Builder fonts(@NotNull FontRegistry fontRegistry);
 
         /**
          * Builds the serializer.

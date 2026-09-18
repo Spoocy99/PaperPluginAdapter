@@ -21,6 +21,7 @@
         <module>compatibility</module>
         <module>compatibility-spigot</module>
         <module>compatibility-paper</module>
+        <module>service-registry</module>
     </modules>
 
     <properties>
@@ -78,6 +79,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
@@ -92,6 +100,12 @@
             <dependency>
                 <groupId>dev.spoocy.adapter</groupId>
                 <artifactId>localization</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.spoocy.adapter</groupId>
+                <artifactId>service-registry</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -135,24 +149,28 @@
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
                 <version>26.2.build.121-stable</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot</artifactId>
                 <version>26.2-R0.1-SNAPSHOT</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot-api</artifactId>
                 <version>26.2-R0.1-SNAPSHOT</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.mojang</groupId>
                 <artifactId>authlib</artifactId>
                 <version>3.17.30</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>

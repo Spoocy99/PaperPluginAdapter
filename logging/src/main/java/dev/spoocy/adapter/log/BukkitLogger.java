@@ -16,102 +16,102 @@ import org.slf4j.Marker;
  */
 public class BukkitLogger {
 
-    public static void trace(@NotNull Marker marker, @NotNull String message, final @NotNull Object... args) {
+    public static void trace(@NotNull Marker marker, @NotNull String message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).trace(marker, message, args);
     }
 
-    public static void trace(@NotNull Marker marker, @NotNull Component message, final @NotNull Object... args) {
+    public static void trace(@NotNull Marker marker, @NotNull Component message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).trace(marker, message, args);
     }
 
-    public static void trace(@NotNull String message, final @NotNull Object... args) {
+    public static void trace(@NotNull String message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).trace(caller, message, args);
     }
 
-    public static void trace(@NotNull Component message, final @NotNull Object... args) {
+    public static void trace(@NotNull Component message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).trace(caller, message, args);
     }
 
-    public static void debug(@NotNull Marker marker, @NotNull String message, final @NotNull Object... args) {
+    public static void debug(@NotNull Marker marker, @NotNull String message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).debug(marker, message, args);
     }
 
-    public static void debug(@NotNull Marker marker, @NotNull Component message, final @NotNull Object... args) {
+    public static void debug(@NotNull Marker marker, @NotNull Component message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).debug(marker, message, args);
     }
 
-    public static void debug(@NotNull String message, final @NotNull Object... args) {
+    public static void debug(@NotNull String message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).debug(caller, message, args);
     }
 
-    public static void debug(@NotNull Component message, final @NotNull Object... args) {
+    public static void debug(@NotNull Component message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).debug(caller, message, args);
     }
 
-    public static void info(@NotNull Marker marker, @NotNull String message, final @NotNull Object... args) {
+    public static void info(@NotNull Marker marker, @NotNull String message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).info(marker, message, args);
     }
 
-    public static void info(@NotNull Marker marker, @NotNull Component message, final @NotNull Object... args) {
+    public static void info(@NotNull Marker marker, @NotNull Component message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).info(marker, message, args);
     }
 
-    public static void info(@NotNull String message, final @NotNull Object... args) {
+    public static void info(@NotNull String message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).info(caller, message, args);
     }
 
-    public static void info(@NotNull Component message, final @NotNull Object... args) {
+    public static void info(@NotNull Component message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).info(caller, message, args);
     }
 
-    public static void warn(@NotNull Marker marker, @NotNull String message, final @NotNull Object... args) {
+    public static void warn(@NotNull Marker marker, @NotNull String message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).warn(marker, message, args);
     }
 
-    public static void warn(@NotNull Marker marker, @NotNull Component message, final @NotNull Object... args) {
+    public static void warn(@NotNull Marker marker, @NotNull Component message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).warn(marker, message, args);
     }
 
-    public static void warn(@NotNull String message, final @NotNull Object... args) {
+    public static void warn(@NotNull String message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).warn(caller, message, args);
     }
 
-    public static void warn(@NotNull Component message, final @NotNull Object... args) {
+    public static void warn(@NotNull Component message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).warn(caller, message, args);
     }
 
-    public static void error(@NotNull Marker marker, @NotNull String message, final @NotNull Object... args) {
+    public static void error(@NotNull Marker marker, @NotNull String message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).error(marker, message, args);
     }
 
-    public static void error(@NotNull Marker marker, @NotNull Component message, final @NotNull Object... args) {
+    public static void error(@NotNull Marker marker, @NotNull Component message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).error(marker, message, args);
     }
 
-    public static void error(@NotNull String message, final @NotNull Object... args) {
+    public static void error(@NotNull String message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).error(caller, message, args);
     }
 
-    public static void error(@NotNull Component message, final @NotNull Object... args) {
+    public static void error(@NotNull Component message, final Object... args) {
         Class<?> caller = ClassFinder.caller();
         getLogger(caller).error(caller, message, args);
     }

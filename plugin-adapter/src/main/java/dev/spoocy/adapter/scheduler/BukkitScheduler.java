@@ -15,6 +15,7 @@ import java.util.function.Supplier;
  * @author Spoocy99 | GitHub: Spoocy99
  */
 
+@Deprecated
 public class BukkitScheduler implements Scheduler {
 
     private final PluginAdapter plugin;

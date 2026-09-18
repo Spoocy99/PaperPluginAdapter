@@ -231,130 +231,131 @@ public class PluginLoggerImpl implements PluginLogger {
     }
 
     @Override
-    public void trace(@NotNull Marker marker, @NotNull Component message, @NotNull Object... args) {
+    public void trace(@NotNull Marker marker, @NotNull Component message, final Object... args) {
         if (!this.level.covers(LogLevel.TRACE)) return;
         this.logComponent(LogLevel.TRACE, this.format(message, formatCaller(marker)), args);
     }
 
 
     @Override
-    public void trace(@NotNull Marker marker, @NotNull String message, @NotNull Object... args) {
+    public void trace(@NotNull Marker marker, @NotNull String message, final Object... args) {
         if (!this.level.covers(LogLevel.TRACE)) return;
         this.logComponent(LogLevel.TRACE, this.format(message, formatCaller(marker), args), args);
     }
 
     @Override
-    public void trace(@NotNull Class<?> location, @NotNull Component message, @NotNull Object... args) {
+    public void trace(@NotNull Class<?> location, @NotNull Component message, final Object... args) {
         if (!this.level.covers(LogLevel.TRACE)) return;
         this.logComponent(LogLevel.TRACE, this.format(message, formatCaller(location)), args);
     }
 
     @Override
-    public void trace(@NotNull Class<?> location, @NotNull String message, @NotNull Object... args) {
+    public void trace(@NotNull Class<?> location, @NotNull String message, final Object... args) {
         if (!this.level.covers(LogLevel.TRACE)) return;
         this.logComponent(LogLevel.TRACE, this.format(message, formatCaller(location), args), args);
     }
 
     @Override
-    public void debug(@NotNull Marker marker, @NotNull Component message, @NotNull Object... args) {
+    public void debug(@NotNull Marker marker, @NotNull Component message, final Object... args) {
         if (!this.level.covers(LogLevel.DEBUG)) return;
         this.logComponent(LogLevel.DEBUG, this.format(message, formatCaller(marker)), args);
     }
 
     @Override
-    public void debug(@NotNull Marker marker, @NotNull String message, @NotNull Object... args) {
+    public void debug(@NotNull Marker marker, @NotNull String message, final Object... args) {
         if (!this.level.covers(LogLevel.DEBUG)) return;
         this.logComponent(LogLevel.DEBUG, this.format(message, formatCaller(marker), args), args);
     }
 
     @Override
-    public void debug(@NotNull Class<?> location, @NotNull Component message, @NotNull Object... args) {
+    public void debug(@NotNull Class<?> location, @NotNull Component message, final Object... args) {
         if (!this.level.covers(LogLevel.DEBUG)) return;
         this.logComponent(LogLevel.DEBUG, this.format(message, formatCaller(location)), args);
     }
 
     @Override
-    public void debug(@NotNull Class<?> location, @NotNull String message, @NotNull Object... args) {
+    public void debug(@NotNull Class<?> location, @NotNull String message, final Object... args) {
         if (!this.level.covers(LogLevel.DEBUG)) return;
         this.logComponent(LogLevel.DEBUG, this.format(message, formatCaller(location), args), args);
     }
 
     @Override
-    public void info(@NotNull Marker marker, @NotNull Component message, @NotNull Object... args) {
+    public void info(@NotNull Marker marker, @NotNull Component message, final Object... args) {
         if (!this.level.covers(LogLevel.INFO)) return;
         this.logComponent(LogLevel.INFO, this.format(message, formatCaller(marker)), args);
     }
 
     @Override
-    public void info(@NotNull Marker marker, @NotNull String message, @NotNull Object... args) {
+    public void info(@NotNull Marker marker, @NotNull String message, final Object... args) {
         if (!this.level.covers(LogLevel.INFO)) return;
         this.logComponent(LogLevel.INFO, this.format(message, formatCaller(marker), args), args);
     }
 
     @Override
-    public void info(@NotNull Class<?> location, @NotNull Component message, @NotNull Object... args) {
+    public void info(@NotNull Class<?> location, @NotNull Component message, final Object... args) {
         if (!this.level.covers(LogLevel.INFO)) return;
         this.logComponent(LogLevel.INFO, this.format(message, formatCaller(location)), args);
     }
 
     @Override
-    public void info(@NotNull Class<?> location, @NotNull String message, @NotNull Object... args) {
+    public void info(@NotNull Class<?> location, @NotNull String message, final Object... args) {
         if (!this.level.covers(LogLevel.INFO)) return;
         this.logComponent(LogLevel.INFO, this.format(message, formatCaller(location), args), args);
     }
 
     @Override
-    public void warn(@NotNull Marker marker, @NotNull Component message, @NotNull Object... args) {
+    public void warn(@NotNull Marker marker, @NotNull Component message, final Object... args) {
         if (!this.level.covers(LogLevel.WARN)) return;
         this.logComponent(LogLevel.WARN, this.format(message, formatCaller(marker)), args);
     }
 
     @Override
-    public void warn(@NotNull Marker marker, @NotNull String message, @NotNull Object... args) {
+    public void warn(@NotNull Marker marker, @NotNull String message, final Object... args) {
         if (!this.level.covers(LogLevel.WARN)) return;
         this.logComponent(LogLevel.WARN, this.format(message, formatCaller(marker), args), args);
     }
 
     @Override
-    public void warn(@NotNull Class<?> location, @NotNull Component message, @NotNull Object... args) {
+    public void warn(@NotNull Class<?> location, @NotNull Component message, final Object... args) {
         if (!this.level.covers(LogLevel.WARN)) return;
         this.logComponent(LogLevel.WARN, this.format(message, formatCaller(location)), args);
     }
 
     @Override
-    public void warn(@NotNull Class<?> location, @NotNull String message, @NotNull Object... args) {
+    public void warn(@NotNull Class<?> location, @NotNull String message, final Object... args) {
         if (!this.level.covers(LogLevel.WARN)) return;
         this.logComponent(LogLevel.WARN, this.format(message, formatCaller(location), args), args);
     }
 
     @Override
-    public void error(@NotNull Marker marker, @NotNull Component message, @NotNull Object... args) {
+    public void error(@NotNull Marker marker, @NotNull Component message, final Object... args) {
         if (!this.level.covers(LogLevel.ERROR)) return;
         this.logComponent(LogLevel.ERROR, this.format(message, formatCaller(marker)), args);
     }
 
     @Override
-    public void error(@NotNull Marker marker, @NotNull String message, @NotNull Object... args) {
+    public void error(@NotNull Marker marker, @NotNull String message, final Object... args) {
         if (!this.level.covers(LogLevel.ERROR)) return;
         this.logComponent(LogLevel.ERROR, this.format(message, formatCaller(marker), args), args);
     }
 
     @Override
-    public void error(@NotNull Class<?> location, @NotNull Component message, @NotNull Object... args) {
+    public void error(@NotNull Class<?> location, @NotNull Component message, final Object... args) {
         if (!this.level.covers(LogLevel.ERROR)) return;
         this.logComponent(LogLevel.ERROR, this.format(message, formatCaller(location)), args);
     }
 
     @Override
-    public void error(@NotNull Class<?> location, @NotNull String message, @NotNull Object... args) {
+    public void error(@NotNull Class<?> location, @NotNull String message, final Object... args) {
         if (!this.level.covers(LogLevel.ERROR)) return;
         this.logComponent(LogLevel.ERROR, this.format(message, formatCaller(location), args), args);
     }
 
+    @NotNull
     private static Component createPrefix(@NotNull String loggerName) {
         return Component.text("[").color(NamedTextColor.GRAY)
                 .append(Component.text(loggerName))
-                .append(Component.text(" ] "));
+                .append(Component.text("] "));
     }
 
     @NotNull
@@ -375,10 +376,10 @@ public class PluginLoggerImpl implements PluginLogger {
             return null;
         }
 
-        return this.isLocationAware() ? "c/" + location.getSimpleName() : null;
+        return this.isLocationAware() ? location.getCanonicalName() : null;
     }
 
-    private Component format(@NotNull String message, final @Nullable String location, final @NotNull Object... args) {
+    private Component format(@NotNull String message, @Nullable String location, final Object... args) {
         message = ILogger.format(message, args);
         Component cmpMessage;
 
@@ -392,7 +393,7 @@ public class PluginLoggerImpl implements PluginLogger {
         return format(cmpMessage, location);
     }
 
-    private Component format(@NotNull Component message, final @Nullable String location) {
+    private Component format(@NotNull Component message, @Nullable String location) {
         if (location != null) {
             message = this.minimessageSerializer
                     .deserialize("<yellow>[" + location + "]</yellow> ")

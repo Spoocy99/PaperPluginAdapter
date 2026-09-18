@@ -1,10 +1,12 @@
 package dev.spoocy.adapter.config;
 
 import dev.spoocy.adapter.core.PluginAdapter;
-import dev.spoocy.adapter.core.config.PluginConfig;
 import dev.spoocy.adapter.log.BukkitLogger;
 import dev.spoocy.utils.common.misc.Args;
-import dev.spoocy.utils.config.*;
+import dev.spoocy.utils.config.BaseResourceResolver;
+import dev.spoocy.utils.config.Config;
+import dev.spoocy.utils.config.Document;
+import dev.spoocy.utils.config.Resources;
 import dev.spoocy.utils.config.bean.ConfigBeanLoader;
 import dev.spoocy.utils.config.bean.LoadStrategy;
 import dev.spoocy.utils.config.constructor.Constructor;
@@ -36,11 +38,11 @@ public class ConfigManager extends BaseResourceResolver {
     private final Representer representer;
     private final ConfigBeanLoader configLoader;
 
-    public ConfigManager(@NotNull PluginAdapter plugin) {
+    public ConfigManager(@NotNull PluginAdapter plugin, @NotNull Representer representer, @NotNull Constructor constructor) {
         super(plugin.getClass().getClassLoader());
         this.plugin = plugin;
-        this.constructor = PluginConfig.configConstructor();
-        this.representer = PluginConfig.configRepresenter();
+        this.constructor = constructor;
+        this.representer = representer;
         this.configLoader = new ConfigBeanLoader(this, this.representer, this.constructor);
 
         registerLoader(YamlConfigLoader.INSTANCE);
@@ -155,7 +157,7 @@ public class ConfigManager extends BaseResourceResolver {
 
             if (updater.run(document) > 0) {
 
-                BukkitLogger.info("Updated config <h>{}</h>", name);
+                BukkitLogger.info("Updated config: {}", name);
                 Resource relation = document.getRelation();
 
                 if (relation instanceof WriteableResource) {

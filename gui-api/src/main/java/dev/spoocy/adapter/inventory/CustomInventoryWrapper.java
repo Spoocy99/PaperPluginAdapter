@@ -36,7 +36,7 @@ public abstract class CustomInventoryWrapper implements CustomInventory {
 
     @Override
     public void setItem(int slot, @Nullable ItemStack item) {
-        BukkitLogger.trace("Setting item in slot {} of inventory of type {} to {}", slot, getType().name(), item == null ? "null" : item.getType().name());
+        //BukkitLogger.trace("Setting item in slot {} of inventory of type {} to {}", slot, getType().name(), item == null ? "null" : item.getType().name());
         this.getInventory().setItem(slot, item);
     }
 

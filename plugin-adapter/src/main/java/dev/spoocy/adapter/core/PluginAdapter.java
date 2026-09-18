@@ -1,21 +1,22 @@
 package dev.spoocy.adapter.core;
 
+import dev.spoocy.adapter.compatibility.AudienceProvider;
 import dev.spoocy.adapter.compatibility.CompatibilityProvider;
 import dev.spoocy.adapter.config.ConfigManager;
 import dev.spoocy.adapter.core.config.DefaultPluginConfig;
 import dev.spoocy.adapter.core.config.PluginConfig;
 import dev.spoocy.adapter.core.config.PluginSetup;
-import dev.spoocy.adapter.core.load.RequirementsChecker;
-import dev.spoocy.adapter.event.EventWaiter;
+import dev.spoocy.adapter.dependencies.DependencyLoader;
+import dev.spoocy.adapter.dependencies.service.DefaultDependencyLoader;
 import dev.spoocy.adapter.inventory.InventoryManager;
 import dev.spoocy.adapter.log.BukkitLogger;
 import dev.spoocy.adapter.log.LoggingPlugin;
 import dev.spoocy.adapter.log.PluginLogger;
 import dev.spoocy.adapter.log.PluginLoggerImpl;
-import dev.spoocy.adapter.scheduler.BukkitScheduler;
+import dev.spoocy.adapter.message.ActionbarHandler;
+import dev.spoocy.adapter.message.GlobalTranslation;
 import dev.spoocy.adapter.spigot.SpigotUpdateChecker;
 import dev.spoocy.utils.common.misc.FileUtils;
-import dev.spoocy.utils.common.scheduler.Scheduler;
 import dev.spoocy.utils.common.text.StringUtils;
 import dev.spoocy.utils.common.version.Version;
 import dev.spoocy.utils.config.Config;
@@ -24,24 +25,23 @@ import dev.spoocy.utils.config.Resources;
 import dev.spoocy.utils.config.io.Resource;
 import dev.spoocy.utils.config.io.WriteableResource;
 import dev.spoocy.utils.config.update.ConfigUpdater;
-import dev.spoocy.utils.security.CheckResult;
-import dev.spoocy.utils.security.SecurityManager;
-import dev.spoocy.utils.security.SecurityTest;
-import dev.spoocy.utils.security.report.SecurityReport;
-import dev.spoocy.utils.security.report.TestContext;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Replaces the old {@link JavaPlugin} class with a more feature-rich version.
@@ -52,6 +52,9 @@ import java.util.List;
 
 public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin {
 
+    /**
+     * Global instance access
+     */
     private static PluginAdapter INSTANCE;
 
     public static PluginAdapter getInstance() {
@@ -70,35 +73,57 @@ public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin 
         INSTANCE = this;
     }
 
-    private final List<Listener> listeners = new ArrayList<>();
-    private final SecurityManager securityManager = new SecurityManager();
+    /**
+     * To-be registered listeners
+     */
+    @Nullable
+    private List<Runnable> listeners;
+
+    /**
+     * Dependencies
+     */
+    @NotNull
+    private final DependencyLoader dependencies;
+
+    /**
+     * Current state
+     */
+    @NotNull
+    private State state;
+
+    /**
+     * Plugin version
+     */
+    private Version pluginVersion;
+
+    /**
+     * Files and config manager
+     */
+    private ConfigManager configManager;
+
+    //private final SecurityManager securityManager = new SecurityManager();
 
     private PluginConfig configuration;
-    private Version pluginVersion;
-    private ConfigManager configManager;
-    private Scheduler bukkitScheduler;
-    private EventWaiter eventWaiter;
-    private SpigotUpdateChecker spigotUpdateChecker;
+    //private SpigotUpdateChecker spigotUpdateChecker;
 
-    private State state;
+    /**
+     * State variables
+     */
+    private boolean wasShutdownBefore = false;
     private boolean firstLaunch = false;
     private boolean reload = false;
     private BootError bootError;
-    private boolean wasShutdownBefore = false;
 
     public PluginAdapter() {
         super();
         this.setInstance();
         this.state = State.LOAD;
+        this.dependencies = new DefaultDependencyLoader(this);
     }
 
+    @Contract(pure = true)
     @NotNull
-    public SecurityManager getSecurityManager() {
-        return this.securityManager;
-    }
-
-    @NotNull
-    public PluginConfig getConfiguration() {
+    public final PluginConfig getConfiguration() {
         if (this.configuration == null) {
             throw new IllegalStateException(
                     "Configuration accessed before it was initialized! Make sure to only access the configuration after it was set in createPlugin() method.");
@@ -106,46 +131,87 @@ public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin 
         return this.configuration;
     }
 
-    public boolean isFirstLaunch() {
+    @Contract(pure = true)
+    public final boolean isFirstLaunch() {
         return this.firstLaunch;
     }
 
-    public boolean isReload() {
+    @Contract(pure = true)
+    public final boolean isReload() {
         return this.reload;
     }
 
-    public State getState() {
+    @Contract(pure = true)
+    @NotNull
+    public final State getState() {
         return this.state;
     }
 
-    public Version getPluginVersion() {
+    @Contract(pure = true)
+    @NotNull
+    public final Version getPluginVersion() {
+        if (this.pluginVersion == null) {
+            throw new IllegalStateException("Call before onLoad()");
+        }
         return this.pluginVersion;
     }
 
-    public ConfigManager getConfigManager() {
+    @Contract(pure = true)
+    @NotNull
+    public final ConfigManager getConfigManager() {
+        if (this.configManager == null) {
+            throw new IllegalStateException("Call before onLoad()");
+        }
         return this.configManager;
     }
 
-    public Scheduler getScheduler() {
-        return this.bukkitScheduler;
-    }
-
-    public EventWaiter getEventWaiter() {
-        return this.eventWaiter;
+    @Contract(pure = true)
+    @NotNull
+    public final DependencyLoader getDependencies() {
+        return this.dependencies;
     }
 
     @NotNull
-    public SpigotUpdateChecker getSpigotUpdateChecker() {
-        if (this.spigotUpdateChecker == null) {
-            throw new IllegalStateException("Spigot Update Checker was not configured via the Plugin Configuration!");
-        }
-        return spigotUpdateChecker;
+    public final AudienceProvider audiences() {
+        return getCompatibilityProvider().getAudienceProvider();
+    }
+
+    @NotNull
+    public final CompatibilityProvider getCompatibilityProvider() {
+        return this.dependencies.getOptional(CompatibilityProvider.class)
+                .orElseThrow(() -> new NoSuchElementException("No CompatibilityProvider set. Use dependencies#add()"));
+    }
+
+    @NotNull
+    public final GlobalTranslation getGlobalTranslation() {
+        return this.dependencies.getOptional(GlobalTranslation.class)
+                .orElseThrow(() -> new NoSuchElementException("No GlobalTranslation set. Use dependencies#add()"));
+    }
+
+    @NotNull
+    public final ActionbarHandler getActionbarHandler() {
+        return this.dependencies.getOptional(ActionbarHandler.class)
+                .orElseThrow(() -> new NoSuchElementException("No ActionbarHandler set. Use dependencies#add()"));
     }
 
     @Override
     public void onLoad() {
         checkRelocation();
-        this.bukkitScheduler = new BukkitScheduler(this);
+
+        //allow for listener registration
+        this.listeners = new ArrayList<>();
+
+        // was reload?
+        if (this.wasShutdownBefore) {
+            this.reload = true;
+        }
+
+        // Create data folder
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdir();
+            this.firstLaunch = true;
+            BukkitLogger.info("First launch of plugin detected.");
+        }
 
         // parse version from description
         String version = getDescription().getVersion();
@@ -157,62 +223,47 @@ public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin 
             return;
         }
 
+        // Configuration
         DefaultPluginConfig config = DefaultPluginConfig.create(this);
-
         try {
             this.createPlugin(config);
+            this.configuration = config.build();
+
         } catch (Exception e) {
             BukkitLogger.error("Error during plugin configuration. Plugin will shut down.", e);
             setError("Configuration Error: " + e.getMessage());
-        }
-
-
-        this.configuration = config.build();
-        this.configManager = new ConfigManager(this);
-        this.securityManager.registerTests(new RequirementsChecker(this));
-
-        if (this.bootError != null) {
-            // plugin will shutdown on enable
             return;
         }
 
-        if (this.wasShutdownBefore) {
-            this.reload = true;
-        }
+        // Configuration: Files
+        this.configManager = new ConfigManager(
+                this,
+                PluginConfig.configRepresenter(),
+                PluginConfig.configConstructor()
+        );
 
-        if (!getDataFolder().exists()) {
-            getDataFolder().mkdir();
-            this.firstLaunch = true;
-            BukkitLogger.info("First launch of plugin detected.");
-        }
-
-        if (!runSecurityTests(SecurityTest.Stage.INIT)) {
-            return;
-        }
-
-        this.eventWaiter = new EventWaiter(this);
-
-        CompatibilityProvider provider = PluginConfig.compatibilityProvider();
-        provider.onLoad();
-
+        // Configuration: Spigot Updater
         int spigotResourceId = PluginConfig.spigotResourceId();
         if (spigotResourceId > 0) {
-            this.spigotUpdateChecker = new SpigotUpdateChecker(this, spigotResourceId);
+            SpigotUpdateChecker checker = new SpigotUpdateChecker(this, spigotResourceId);
+            this.dependencies.add(SpigotUpdateChecker.class, checker);
             BukkitLogger.debug("Enabled Spigot Update Checker for this plugin. Resource ID: {}", spigotResourceId);
         }
 
         try {
-            this.handleLoad();
+            this.handleLoad(this.dependencies);
         } catch (Exception e) {
             BukkitLogger.error("Error during plugin load phase. Plugin will shut down.", e);
-            setError("Loading Error: " + e.getMessage());
+            setError(e.getMessage());
         }
 
-        if (this.startFailed()) {
+        try {
+            this.dependencies.load();
+        } catch (Exception e) {
+            BukkitLogger.error("Error while loading: " + e.getMessage(), e);
+            setError(e.getMessage());
             return;
         }
-
-        runSecurityTests(SecurityTest.Stage.FINISHED_LOADING);
     }
 
     @Override
@@ -224,21 +275,26 @@ public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin 
             return;
         }
 
-        if (!runSecurityTests(SecurityTest.Stage.READY)) {
-            return;
+        // enable compatibility & gui api
+        getCompatibilityProvider().onEnable();
+        InventoryManager.onEnable(this, this::getCompatibilityProvider);
+
+        // Listener registration
+        if (this.listeners == null) {
+
+            // should not happen
+            throw new IllegalStateException("Listeners not initialized");
         }
+        this.listeners.forEach(Runnable::run);
 
-        PluginConfig.compatibilityProvider().onEnable();
-
-        InventoryManager.onEnable(this, PluginConfig::compatibilityProvider);
-
-        this.listeners.forEach(this::registerListener);
+        // no more indirect registration
+        this.listeners = null;
 
         try {
             this.handleEnable();
         } catch (Exception e) {
             BukkitLogger.error("Error during plugin enable phase. Plugin will shut down.", e);
-            setError("Enable Error: " + e.getMessage());
+            setError(e.getMessage());
         }
     }
 
@@ -246,11 +302,6 @@ public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin 
     public void onDisable() {
         this.state = State.DISABLED;
         this.wasShutdownBefore = true;
-        this.listeners.clear();
-
-        if (!runSecurityTests(SecurityTest.Stage.SHUTDOWN) || startFailed()) {
-            return;
-        }
 
         try {
             this.handleDisable();
@@ -258,13 +309,19 @@ public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin 
             BukkitLogger.error("Error during plugin disable phase.", e);
         }
 
+        // disable compatibility & gui api
         InventoryManager.onDisable();
-        PluginConfig.compatibilityProvider().onDisable();
+
+        // safe cleanup
+        this.dependencies.getOptional(CompatibilityProvider.class)
+                        .ifPresent(CompatibilityProvider::onDisable);
+
+        this.dependencies.cleanup();
     }
 
     /**
      * Called to create the plugin configuration.
-     * <br> This is called before {@link #handleLoad()}.
+     * <br> This is called before {@link #handleLoad(DependencyLoader)}.
      */
     public abstract void createPlugin(@NotNull PluginSetup config);
 
@@ -272,7 +329,7 @@ public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin 
      * Will be called on load of the plugin.
      * <br> Most methods will return {@code null} at this point!
      */
-    public abstract void handleLoad() throws Exception;
+    public abstract void handleLoad(@NotNull DependencyLoader dependencies) throws Exception;
 
     /**
      * Will be called when the plugin is enabled.
@@ -284,21 +341,6 @@ public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin 
      * <br> After this, nothing will happen until the plugin is enabled again (server restart etc.)
      */
     public abstract void handleDisable() throws Exception;
-
-    protected boolean runSecurityTests(@NotNull SecurityTest.Stage stage) {
-        SecurityReport report = this.securityManager.runTests(stage);
-
-        for (TestContext context : report.getTests()) {
-
-            if (context.getResult() == CheckResult.KILL_PROGRAM) {
-                setError(context.getDetails());
-                return false;
-            }
-
-        }
-
-        return true;
-    }
 
     /**
      * Checks if the plugin failed to start.
@@ -374,20 +416,6 @@ public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin 
         }
 
         return this.logger;
-    }
-
-    @Nullable
-    public Config getRequirementsYML() {
-        Resource resource = getClassPathResource("env-requirements.yml");
-        if (!resource.exists()) {
-            return null;
-        }
-
-        try {
-            return this.loadConfig(resource, true);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 
     @Override
@@ -501,23 +529,37 @@ public abstract class PluginAdapter extends JavaPlugin implements LoggingPlugin 
 
     public void registerListener(@NotNull Listener listener) {
         if (!isEnabled()) {
-            this.listeners.add(listener);
+            // safe action for later
+            this.listeners.add(() -> registerListener(listener));
             return;
         }
-        getServer().getPluginManager()
-                .registerEvents(listener, this);
-        BukkitLogger.trace(
-                "Registered Listener Class '{}'.", listener.getClass()
-                        .getSimpleName()
+
+        getServer().getPluginManager().registerEvents(listener, this);
+        BukkitLogger.trace("Registered Listener Class '{}'.", listener.getClass().getSimpleName());
+    }
+
+    public void registerListener(
+            @NotNull Class<? extends Event> event,
+            @NotNull Listener listener,
+            @NotNull EventPriority priority,
+            @NotNull EventExecutor executor,
+            boolean ignoreCancelled
+    ) {
+        if (!isEnabled()) {
+            // safe action for later
+            this.listeners.add(() -> registerListener(event, listener, priority, executor, ignoreCancelled));
+            return;
+        }
+
+        getServer().getPluginManager().registerEvent(
+                event, listener, priority, executor, this, ignoreCancelled
         );
+        BukkitLogger.trace("Registered Listener Event '{}' <-- {}.", listener.getClass().getSimpleName(), event.getSimpleName());
     }
 
     public void unregisterListener(@NotNull Listener listener) {
         HandlerList.unregisterAll(listener);
-        BukkitLogger.trace(
-                "Unregistered Listener Class '{}'.", listener.getClass()
-                        .getSimpleName()
-        );
+        BukkitLogger.trace("Unregistered Listener Class '{}'.", listener.getClass().getSimpleName());
     }
 
     public void callEvent(@NotNull Event event) {

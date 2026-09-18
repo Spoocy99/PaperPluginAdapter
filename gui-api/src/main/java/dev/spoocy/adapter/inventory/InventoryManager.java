@@ -49,33 +49,36 @@ public class InventoryManager implements Listener {
     private Plugin plugin;
     private Supplier<CompatibilityProvider> factory;
 
-    private InventoryManager() { }
+    private InventoryManager() {
+    }
 
     @NotNull
     public Plugin getInitializerPlugin() {
-        if(this.plugin == null) {
-            throw new IllegalStateException("InventoryManager has not been loaded! Use InventoryManager.onLoad(Plugin, Factory)");
+        if (this.plugin == null) {
+            throw new IllegalStateException(
+                    "InventoryManager has not been loaded! Use InventoryManager.onLoad(Plugin, Factory)");
         }
         return this.plugin;
     }
 
     @NotNull
     public CompatibilityProvider getFactory() {
-        if(this.factory == null) {
-            throw new IllegalStateException("InventoryManager has not been loaded! Use InventoryManager.onLoad(Plugin, Factory)");
+        if (this.factory == null) {
+            throw new IllegalStateException(
+                    "InventoryManager has not been loaded! Use InventoryManager.onLoad(Plugin, Factory)");
         }
         return this.factory.get();
     }
 
     public void init(@NotNull Plugin plugin, @NotNull Supplier<CompatibilityProvider> factory) {
-         if(this.plugin != null) return;
+        if (this.plugin != null) return;
         this.plugin = plugin;
         this.factory = factory;
         Bukkit.getPluginManager().registerEvents(INSTANCE, plugin);
     }
 
     public void shutdown() {
-        if(this.plugin == null) return;
+        if (this.plugin == null) return;
         this.plugin = null;
         HandlerList.unregisterAll(INSTANCE);
     }
@@ -96,7 +99,7 @@ public class InventoryManager implements Listener {
     public CustomInventory getHandler(@NotNull Inventory inventory) {
         InventoryHolder holder = inventory.getHolder();
 
-        if(holder instanceof CustomInventory) {
+        if (holder instanceof CustomInventory) {
             return (CustomInventory) holder;
         }
 
@@ -110,7 +113,11 @@ public class InventoryManager implements Listener {
     }
 
     public void markOpen(@NotNull GuiView view) {
-        BukkitLogger.trace("Player {} marked as viewing gui {}", view.getViewer().getName(), view.getClass().getSimpleName());
+        BukkitLogger.trace(
+                "Player {} marked as viewing gui {}",
+                view.getViewer().getName(),
+                view.getClass().getSimpleName()
+        );
         this.currentlyOpen.put(view.getViewer(), view);
     }
 
@@ -134,9 +141,16 @@ public class InventoryManager implements Listener {
             provider.clearCached(event.getPlayer());
         }
 
-        if(getCurrentlyOpen(event.getPlayer()) != null) {
+        if (getCurrentlyOpen(event.getPlayer()) != null) {
             this.markClosed(event.getPlayer());
         }
+
+        BukkitLogger.trace(
+                "Clearing {} cached views for player: {} ({})",
+                this.clearOnDisconnect.size(),
+                event.getPlayer().getName(),
+                event.getPlayer().getUniqueId()
+        );
     }
 
     @EventHandler(
@@ -147,7 +161,7 @@ public class InventoryManager implements Listener {
         //BukkitLogger.trace("InventoryManager called for Event handling: InventoryOpenEvent ({})", event.getPlayer().getName());
 
         CustomInventory custom = getHandler(event.getInventory());
-        if(custom != null) {
+        if (custom != null) {
             //BukkitLogger.trace("Handling open event for custom inventory {}", custom);
             custom.handle(event);
         }
@@ -161,7 +175,7 @@ public class InventoryManager implements Listener {
         //BukkitLogger.trace("InventoryManager called for Event handling: InventoryCloseEvent ({})", event.getPlayer().getName());
 
         CustomInventory custom = getHandler(event.getInventory());
-        if(custom != null) {
+        if (custom != null) {
             //BukkitLogger.trace("Handling close event for custom inventory {}", custom);
             custom.handle(event);
         }
@@ -189,7 +203,7 @@ public class InventoryManager implements Listener {
         }
 
         CustomInventory custom = getHandler(clickedInventory);
-        if(custom != null) {
+        if (custom != null) {
             //BukkitLogger.trace("Handling click event for custom inventory {}", custom);
             custom.handle(event);
         }
@@ -201,7 +215,7 @@ public class InventoryManager implements Listener {
     )
     public void onInventoryDrag(@NotNull InventoryDragEvent event) {
         CustomInventory custom = getHandler(event.getInventory());
-        if(custom != null) {
+        if (custom != null) {
             //BukkitLogger.trace("Handling drag event for custom inventory {}", custom);
             custom.handle(event);
         }
@@ -215,20 +229,18 @@ public class InventoryManager implements Listener {
         //BukkitLogger.trace("InventoryManager called for Event handling: InventoryMoveItemEvent");
 
         CustomInventory source = getHandler(event.getSource());
-        if(source != null) {
+        if (source != null) {
             //BukkitLogger.trace("Handling move event (source) for custom inventory {}", source);
             source.handle(event);
             return;
         }
 
         CustomInventory destination = getHandler(event.getDestination());
-        if(destination != null) {
+        if (destination != null) {
             //BukkitLogger.trace("Handling move event (dest) for custom inventory {}", destination);
             destination.handle(event);
         }
     }
-
-
 
 
 }

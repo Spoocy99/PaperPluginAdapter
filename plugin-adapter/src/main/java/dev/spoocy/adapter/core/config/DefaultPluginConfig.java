@@ -1,21 +1,17 @@
 package dev.spoocy.adapter.core.config;
 
-import dev.spoocy.adapter.compatibility.CompatibilityProvider;
 import dev.spoocy.adapter.config.BukkitConstructor;
 import dev.spoocy.adapter.config.BukkitRepresenter;
 import dev.spoocy.adapter.config.SerializationStrategy;
 import dev.spoocy.adapter.core.PluginAdapter;
-import dev.spoocy.adapter.message.ActionbarHandler;
-import dev.spoocy.adapter.message.GlobalTranslation;
 import dev.spoocy.adapter.message.color.Color;
-import dev.spoocy.adapter.message.font.DefaultFontRegistry;
 import dev.spoocy.adapter.message.font.Font;
-import dev.spoocy.adapter.message.font.FontRegistry;
 import dev.spoocy.adapter.sound.PSound;
 import dev.spoocy.utils.common.misc.Args;
 import dev.spoocy.utils.config.constructor.Constructor;
 import dev.spoocy.utils.config.representer.Representer;
 import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -28,21 +24,15 @@ public class DefaultPluginConfig implements PluginSetup {
 
     private static final SerializationStrategy DEFAULT_SERIALIZATION_STRATEGY = SerializationStrategy.LOG_ONLY;
 
-    public static DefaultPluginConfig create(@NotNull PluginAdapter adapter) {
+    @Contract("_ -> new")
+    public static @NotNull DefaultPluginConfig create(@NotNull PluginAdapter adapter) {
         return new DefaultPluginConfig(adapter);
     }
 
     protected final PluginAdapter adapter;
-    protected CompatibilityProvider compatibilityProvider;
-    protected GlobalTranslation globalTranslation;
     protected int spigotResourceId = -1;
-    protected FontRegistry fontRegistry = new DefaultFontRegistry();
     protected Constructor configConstructor = new BukkitConstructor(DEFAULT_SERIALIZATION_STRATEGY);
     protected Representer configRepresenter = new BukkitRepresenter(DEFAULT_SERIALIZATION_STRATEGY);
-
-    protected ActionbarHandler actionbarHandler = (p, m) -> {
-        throw new UnsupportedOperationException("ActionbarHandler not provided in config");
-    };
 
 
     private DefaultPluginConfig(@NotNull PluginAdapter adapter) {
@@ -50,26 +40,9 @@ public class DefaultPluginConfig implements PluginSetup {
     }
 
     @Override
-    public void setCompatibilityProvider(@NotNull CompatibilityProvider compatibilityProvider) {
-        this.compatibilityProvider = Args.notNull(compatibilityProvider, "CompatibilityProvider");
-    }
-
-    @Override
-    public void setGlobalTranslation(@NotNull GlobalTranslation translation) {
-        this.globalTranslation = Args.notNull(translation, "GlobalTranslation");
-    }
-
-    @Override
-    public void setFontRegistry(@NotNull FontRegistry registry) {
-        this.fontRegistry = Args.notNull(registry, "FontRegistry");
-    }
-
-    @Override
     public void addSpigotUpdateChecker(int spigotResourceId) {
         this.spigotResourceId = Args.notNegative(spigotResourceId, "SpigotResourceId");
     }
-
-
 
     @Override
     public void setConfigConstructor(@NotNull Constructor constructor) {
@@ -81,23 +54,11 @@ public class DefaultPluginConfig implements PluginSetup {
         this.configRepresenter = Args.notNull(representer, "ConfigRepresenter");
     }
 
-    @Override
-    public void setActionbarHandler(@NotNull ActionbarHandler handler) {
-        this.actionbarHandler = Args.notNull(handler, "ActionbarHandler");
-    }
-
     public @NotNull PluginConfig build() throws IllegalArgumentException {
-        Args.notNull(this.compatibilityProvider, "AudienceProvider");
-        Args.notNull(this.globalTranslation, "GlobalTranslation");
-
         PluginConfig config = new Registry();
-        config.write(PluginConfig.Keys.COMPATIBILITY, this.compatibilityProvider);
-        config.write(PluginConfig.Keys.FONT_REGISTRY, this.fontRegistry);
-        config.write(PluginConfig.Keys.GLOBAL_TRANSLATION, this.globalTranslation);
         config.write(PluginConfig.Keys.SPIGOT_RESOURCE_ID, this.spigotResourceId);
         config.write(PluginConfig.Keys.CONFIG_CONSTRUCTOR, this.configConstructor);
         config.write(PluginConfig.Keys.CONFIG_REPRESENTER, this.configRepresenter);
-        config.write(PluginConfig.Keys.ACTIONBAR_HANDLER, this.actionbarHandler);
         return config;
     }
 

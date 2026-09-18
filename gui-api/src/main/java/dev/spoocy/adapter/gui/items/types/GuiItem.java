@@ -3,10 +3,11 @@ package dev.spoocy.adapter.gui.items.types;
 import com.google.common.collect.ImmutableList;
 import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.view.GuiView;
-import dev.spoocy.adapter.log.BukkitLogger;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
@@ -37,9 +38,9 @@ public abstract class GuiItem implements Item {
         int count = itemRefCount.getOrDefault(gui, 0);
         itemRefCount.put(gui, count + 1);
 
-        if (count == 0) {
-            BukkitLogger.trace("Subscribed view {} to item {}, total views: {}", gui, this, this.getViews().size());
-        }
+//        if (count == 0) {
+//            BukkitLogger.trace("Subscribed view {} to item {}, total views: {}", gui, this, this.getViews().size());
+//        }
     }
 
     @Override
@@ -49,7 +50,7 @@ public abstract class GuiItem implements Item {
 
         if (count == 1) {
             itemRefCount.remove(gui);
-            BukkitLogger.trace("Unsubscribed view {} from item {}, total views: {}", gui, this, this.getViews().size());
+            //BukkitLogger.trace("Unsubscribed view {} from item {}, total views: {}", gui, this, this.getViews().size());
         } else {
             itemRefCount.put(gui, count - 1);
         }
@@ -60,7 +61,7 @@ public abstract class GuiItem implements Item {
         for (GuiView gui : this.getViews()) {
             gui.redraw(this);
         }
-        BukkitLogger.trace("Updated item in {} views", this.getViews().size());
+        //BukkitLogger.trace("Updated item in {} views", this.getViews().size());
     }
 
 }

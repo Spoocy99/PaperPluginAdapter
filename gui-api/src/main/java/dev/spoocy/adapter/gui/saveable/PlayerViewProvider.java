@@ -64,7 +64,7 @@ public abstract class PlayerViewProvider<V extends GuiView> implements ViewProvi
     }
 
     public void clearCached(@NotNull Player player) {
-        BukkitLogger.trace("Clearing cached view for player: " + player.getName() + " (" + player.getUniqueId() + ")");
+        //BukkitLogger.trace("Clearing cached view for player: " + player.getName() + " (" + player.getUniqueId() + ")");
         this.data.remove(player);
     }
 

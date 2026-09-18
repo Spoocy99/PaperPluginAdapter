@@ -17,6 +17,6 @@ public @interface LogAs {
 
     String value();
 
-    boolean explicit() default true;
+    boolean explicit() default false;
 
 }

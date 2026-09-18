@@ -3,7 +3,6 @@ package dev.spoocy.adapter.gui.layout.slot;
 import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.items.types.GuiControlItem;
 import dev.spoocy.adapter.gui.types.Gui;
-import dev.spoocy.adapter.log.BukkitLogger;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +64,7 @@ public class SlotImpl implements Slot {
     @Override
     public void setItem(@Nullable Item item, @NotNull Type type) {
         Item previousItem = this.currentItem;
-        BukkitLogger.trace("Updating Slot Item (Gui: {} | X: {} | Y: {}) to {} (type: {})", this.parent, this.x, this.y, item == null ? "null" : item.getClass().getSimpleName(), type);
+        //BukkitLogger.trace("Updating Slot Item (Gui: {} | X: {} | Y: {}) to {} (type: {})", this.parent, this.x, this.y, item == null ? "null" : item.getClass().getSimpleName(), type);
 
         if(item == null) {
             this.currentItem = null;

@@ -1,6 +1,6 @@
 package dev.spoocy.adapter.message.types;
 
-import dev.spoocy.adapter.core.config.PluginConfig;
+import dev.spoocy.adapter.core.PluginAdapter;
 import dev.spoocy.adapter.message.GlobalTranslation;
 import dev.spoocy.adapter.message.serialization.RenderContext;
 import dev.spoocy.adapter.message.style.MessageStyle;
@@ -43,7 +43,7 @@ public abstract class AbstractPluginMessage<P extends ScopedMessage<P>> implemen
 
     @NotNull
     protected GlobalTranslation translation() {
-        return PluginConfig.globalTranslation();
+        return PluginAdapter.getInstance().getGlobalTranslation();
     }
 
     @Override
@@ -62,7 +62,7 @@ public abstract class AbstractPluginMessage<P extends ScopedMessage<P>> implemen
 
     @Override
     public void send(@NotNull Player player) {
-        Audience audience = PluginConfig.audiences().player(player);
+        Audience audience = PluginAdapter.getInstance().audiences().player(player);
         audience.sendMessage(this.cmp((Pointered) audience));
     }
 
@@ -72,7 +72,7 @@ public abstract class AbstractPluginMessage<P extends ScopedMessage<P>> implemen
             send((Player) sender);
         } else {
 
-            Audience audience = PluginConfig.audiences().commandSender(sender);
+            Audience audience = PluginAdapter.getInstance().audiences().commandSender(sender);
             audience.sendMessage(this.cmp((Pointered) audience));
         }
     }
@@ -80,18 +80,18 @@ public abstract class AbstractPluginMessage<P extends ScopedMessage<P>> implemen
     @Override
     public void sendActionbar(@NotNull Player player) {
         Component component = this.cmp(player);
-        PluginConfig.actionbarHandler().sendActionbar(player, component);
+        PluginAdapter.getInstance().getActionbarHandler().sendActionbar(player, component);
     }
 
     @Override
     public void sendToConsole() {
-        Audience console = PluginConfig.audiences().console();
+        Audience console = PluginAdapter.getInstance().audiences().console();
         console.sendMessage(this.cmp((Pointered) console));
     }
 
     @Override
     public void broadcast() {
-        Audience all = PluginConfig.compatibilityProvider().getAudienceProvider().all();
+        Audience all = PluginAdapter.getInstance().audiences().all();
         broadcast(all);
     }
 

@@ -22,8 +22,6 @@ import java.util.function.Consumer;
 
 public interface CompatibilityProvider {
 
-    void onLoad();
-
     void onEnable();
 
     void onDisable();

@@ -1,9 +1,10 @@
 package dev.spoocy.adapter.items;
 
 import dev.spoocy.adapter.compatibility.items.ItemBuilder;
-import dev.spoocy.adapter.core.config.PluginConfig;
+import dev.spoocy.adapter.core.PluginAdapter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,11 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class Items {
 
-    private Items() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
-    }
-
-    public static ItemStack emptySkull() {
+    @Contract(" -> new")
+    public static @NotNull ItemStack emptySkull() {
         try {
             return new ItemStack(Material.valueOf("PLAYER_HEAD"));
         } catch (IllegalArgumentException e) {
@@ -24,15 +22,22 @@ public final class Items {
         }
     }
 
-    public static ItemBuilder item(@NotNull Material material) {
-        return PluginConfig.compatibilityProvider().itemBuilder(material);
+    @Contract("_ -> new")
+    public static @NotNull ItemBuilder item(@NotNull Material material) {
+        return PluginAdapter.getInstance().getCompatibilityProvider().itemBuilder(material);
     }
-    public static ItemBuilder item(@NotNull ItemStack item) {
-        return PluginConfig.compatibilityProvider().itemBuilder(item);
+    @Contract("_ -> new")
+    public static @NotNull ItemBuilder item(@NotNull ItemStack item) {
+        return PluginAdapter.getInstance().getCompatibilityProvider().itemBuilder(item);
     }
 
-    public static ItemBuilder skull() {
+    @Contract(" -> new")
+    public static @NotNull ItemBuilder skull() {
         return item(Material.PLAYER_HEAD);
+    }
+
+    private Items() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
 }

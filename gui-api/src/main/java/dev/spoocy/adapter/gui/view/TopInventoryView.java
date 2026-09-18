@@ -67,7 +67,7 @@ public abstract class TopInventoryView extends AbstractInventoryView implements 
     }
 
     private void applyGui(@NotNull Gui gui) {
-        //BukkitLogger.debug("Applying new GUI to TopInventoryView: {}", gui);
+        BukkitLogger.debug("Applying new GUI to TopInventoryView: {}", gui);
         this.gui = gui;
         this.gui.subscribe(this);
         this.gui.retrieveAllPresentItems().forEach(item -> item.subscribe(this));
@@ -120,7 +120,7 @@ public abstract class TopInventoryView extends AbstractInventoryView implements 
 
     @Override
     public void redraw(int x, int y) {
-        BukkitLogger.trace("Redrawing slot at X: {} Y: {}", x, y);
+        //BukkitLogger.trace("Redrawing slot at X: {} Y: {}", x, y);
         Item item = gui.getItem(x, y);
         this.inventory.setItem(
                 coordinateToSlot(x, y),

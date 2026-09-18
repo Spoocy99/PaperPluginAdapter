@@ -1,6 +1,6 @@
 package dev.spoocy.adapter.message;
 
-import dev.spoocy.adapter.core.config.PluginConfig;
+import dev.spoocy.adapter.core.PluginAdapter;
 import dev.spoocy.adapter.language.LocalizedReceiver;
 import dev.spoocy.adapter.message.serialization.RenderContext;
 import dev.spoocy.adapter.message.sprites.Sprites;
@@ -249,7 +249,7 @@ public interface Message extends Styleable<Message>, MessageLike, LocalizedCompo
      */
     @NotNull
     static Component cmp(@NotNull String message) {
-        return PluginConfig.globalTranslation().miniMessageSerializer().deserialize(message);
+        return PluginAdapter.getInstance().getGlobalTranslation().miniMessageSerializer().deserialize(message);
     }
 
     /**
@@ -287,6 +287,25 @@ public interface Message extends Styleable<Message>, MessageLike, LocalizedCompo
         return RenderContext.target(target);
     }
 
+    @NotNull
+    static RenderContext asContext(@NotNull Player target) {
+        Args.notNull(target, "target");
+
+        Audience audience = PluginAdapter.getInstance()
+                .getCompatibilityProvider()
+                .getAudienceProvider()
+                .player(target);
+
+        return RenderContext.target(audience);
+    }
+
+    @NotNull
+    static RenderContext asContext(@NotNull Locale locale) {
+        Args.notNull(locale, "locale");
+
+        return RenderContext.locale(locale);
+    }
+
     /**
      * Creates a {@link DecorationMap}
      */
@@ -321,7 +340,7 @@ public interface Message extends Styleable<Message>, MessageLike, LocalizedCompo
      */
     @NotNull
     static String toLegacy(@NotNull Component component) {
-        return PluginConfig.globalTranslation().legacySerializer().serialize(component);
+        return PluginAdapter.getInstance().getGlobalTranslation().legacySerializer().serialize(component);
     }
 
     /**
@@ -346,7 +365,7 @@ public interface Message extends Styleable<Message>, MessageLike, LocalizedCompo
      */
     @NotNull
     static String toPlainText(@NotNull Component component) {
-        return PluginConfig.globalTranslation().plainSerializer().serialize(component);
+        return PluginAdapter.getInstance().getGlobalTranslation().plainSerializer().serialize(component);
     }
 
     /**
@@ -354,7 +373,7 @@ public interface Message extends Styleable<Message>, MessageLike, LocalizedCompo
      */
     @NotNull
     static String toMiniMessageFormat(@NotNull Component component) {
-        return PluginConfig.globalTranslation().miniMessageSerializer().serialize(component);
+        return PluginAdapter.getInstance().getGlobalTranslation().miniMessageSerializer().serialize(component);
     }
 
     int DEFAULT_MAX_PIXELS_PER_LINE = 200;
@@ -690,67 +709,66 @@ public interface Message extends Styleable<Message>, MessageLike, LocalizedCompo
         return this.cmp(context, true);
     }
 
+
     /**
-     * Renders the message into a list of components with a specified {@link Locale language}.
-     * <br>
-     * May contain child {@link Component#newline() NEW_LINE}.
-     * <p>
-     * <b> This list will not contain any {@link TranslatableComponent TranslatableComponents}. </b>
-     *
-     * @return the rendered message
+     * Renders for a {@link Locale}.
      */
     @NotNull
     default List<Component> cmpLines(@NotNull Locale locale) {
-        Args.notNull(locale, "locale");
-        return this.cmpLines(RenderContext.locale(locale));
+        return this.cmpLines(asContext(locale), true);
     }
 
     /**
-     * Renders the message into a single component with a specified {@link Locale language}.
-     * <br>
-     * May contain child {@link Component#newline() NEW_LINE}.
-     * <p>
-     * <b> This component will never be a {@link TranslatableComponent}. </b>
-     *
-     * @return the rendered message
+     * Renders for a {@link Locale}.
      */
     @NotNull
     default Component cmp(@NotNull Locale locale) {
-        Args.notNull(locale, "locale");
-        return this.cmp(RenderContext.locale(locale));
+        return this.cmp(asContext(locale), true);
     }
 
+    /**
+     * Renders for a {@link LocalizedReceiver}.
+     */
     @NotNull
     default List<Component> cmpLines(@NotNull LocalizedReceiver target) {
-        Args.notNull(target, "target");
-        return this.cmpLines(RenderContext.locale(target.getLocale()));
+        return this.cmpLines(asContext(target.getLocale()), true);
     }
 
+    /**
+     * Renders for a {@link LocalizedReceiver}.
+     */
     @NotNull
     default Component cmp(@NotNull LocalizedReceiver target) {
-        Args.notNull(target, "target");
-        return this.cmp(RenderContext.locale(target.getLocale()));
+        return this.cmp(asContext(target.getLocale()), true);
     }
 
+    /**
+     * Renders for a {@link Player}.
+     */
     @NotNull
     default List<Component> cmpLines(@NotNull Player target) {
-        Args.notNull(target, "target");
-        Audience audience = PluginConfig.compatibilityProvider().getAudienceProvider().player(target);
-        return this.cmpLines(audience);
+        return this.cmpLines(asContext(target), true);
     }
 
+    /**
+     * Renders for a {@link Player}.
+     */
     @NotNull
     default Component cmp(@NotNull Player target) {
-        Args.notNull(target, "target");
-        Audience audience = PluginConfig.compatibilityProvider().getAudienceProvider().player(target);
-        return this.cmp(audience);
+        return this.cmp(asContext(target), true);
     }
 
+    /**
+     * Renders for a {@link Pointered}.
+     */
     @NotNull
     default List<Component> cmpLines(@NotNull Pointered target) {
-        return this.cmpLines(asContext(target));
+        return this.cmpLines(asContext(target), true);
     }
 
+    /**
+     * Renders for a {@link Pointered}.
+     */
     @NotNull
     default Component cmp(@NotNull Pointered target) {
         return this.cmp(asContext(target));

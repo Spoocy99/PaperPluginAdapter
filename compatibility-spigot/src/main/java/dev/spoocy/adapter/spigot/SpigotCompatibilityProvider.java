@@ -48,11 +48,6 @@ public class SpigotCompatibilityProvider implements CompatibilityProvider {
     }
 
     @Override
-    public void onLoad() {
-
-    }
-
-    @Override
     public void onEnable() {
         this.audienceProvider.initialize();
     }

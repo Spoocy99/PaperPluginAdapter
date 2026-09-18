@@ -3,9 +3,15 @@ package dev.spoocy.adapter.config;
 import dev.spoocy.adapter.core.PluginAdapter;
 import dev.spoocy.adapter.log.BukkitLogger;
 import dev.spoocy.utils.common.version.Version;
-import dev.spoocy.utils.config.*;
+import dev.spoocy.utils.config.Config;
+import dev.spoocy.utils.config.ConfigProvider;
+import dev.spoocy.utils.config.ConfigSection;
+import dev.spoocy.utils.config.Document;
 import dev.spoocy.utils.config.io.Resource;
-import dev.spoocy.utils.config.update.*;
+import dev.spoocy.utils.config.update.ConfigMigration;
+import dev.spoocy.utils.config.update.ConfigUpdater;
+import dev.spoocy.utils.config.update.VersionMatcher;
+import dev.spoocy.utils.config.update.VersionResolver;
 import dev.spoocy.utils.config.update.migrations.MissingFieldsMigration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,35 +27,46 @@ import java.util.List;
 
 public class BukkitConfigUpdater implements ConfigUpdater, ConfigProvider {
 
-    public static final VersionResolver RESOLVER = new PathVersionResolver("config-version", Version.ZERO);
-
     @Nullable
     private final Config newer;
 
     @Nullable
     private final Resource resource;
 
+    @NotNull
     private final PluginAdapter plugin;
+
+    @NotNull
     private final VersionResolver resolver;
-    private final MissingFieldsMigration migration;
 
-    public BukkitConfigUpdater(@NotNull PluginAdapter plugin, @NotNull String classPath) {
-        this(plugin, classPath, RESOLVER, null);
-    }
+    @NotNull
+    private final ConfigMigration migration;
 
-    public BukkitConfigUpdater(@NotNull PluginAdapter plugin, @NotNull String classPath, @NotNull VersionResolver resolver, @Nullable VersionMatcher matcher) {
+    public BukkitConfigUpdater(
+            @NotNull PluginAdapter plugin,
+            @NotNull String classPath,
+            @NotNull VersionResolver resolver,
+            @Nullable VersionMatcher matcher
+    ) {
         this(plugin, plugin.getClassPathResource(classPath), resolver, matcher);
     }
 
-    public BukkitConfigUpdater(@NotNull PluginAdapter plugin, @NotNull Resource resource, @NotNull VersionResolver resolver, @Nullable VersionMatcher matcher) {
+    public BukkitConfigUpdater(
+            @NotNull PluginAdapter plugin,
+            @NotNull Resource resource,
+            @NotNull VersionResolver resolver,
+            @Nullable VersionMatcher matcher
+    ) {
         this(plugin, null, resource, resolver, matcher);
     }
 
-    public BukkitConfigUpdater(@NotNull PluginAdapter plugin, @NotNull Config newer, @NotNull VersionResolver resolver, @Nullable VersionMatcher matcher) {
-        this(plugin, newer, null, resolver, matcher);
-    }
-
-    private BukkitConfigUpdater(@NotNull PluginAdapter plugin, @Nullable Config newer, @Nullable Resource resource, @NotNull VersionResolver resolver, @Nullable VersionMatcher matcher) {
+    private BukkitConfigUpdater(
+            @NotNull PluginAdapter plugin,
+            @Nullable Config newer,
+            @Nullable Resource resource,
+            @NotNull VersionResolver resolver,
+            @Nullable VersionMatcher matcher
+    ) {
         this.plugin = plugin;
         this.resolver = resolver;
         this.newer = newer;
@@ -59,11 +76,11 @@ public class BukkitConfigUpdater implements ConfigUpdater, ConfigProvider {
 
     @Override
     public @NotNull Config provide() {
-        if(this.newer != null) {
+        if (this.newer != null) {
             return this.newer;
         }
 
-        if(this.resource == null) {
+        if (this.resource == null) {
             throw new IllegalStateException("No provided newer config or resource.");
         }
 
@@ -102,17 +119,17 @@ public class BukkitConfigUpdater implements ConfigUpdater, ConfigProvider {
         }
 
         VersionMatcher check = this.migration.fromVersion();
-        if(check != null && current != null && !check.matches(current)) {
+        if (check != null && current != null && !check.matches(current)) {
             BukkitLogger.debug("Config version '{}' for {} is not available for migration.", current, name);
             return 0;
         }
 
-        if(current == null || this.migration.toVersion().isNewerThan(current)) {
+        if (current == null || this.migration.toVersion().isNewerThan(current)) {
             BukkitLogger.debug("Migrating config for {}", name);
             this.migration.apply(configSection);
             current = this.migration.toVersion();
             this.resolver.apply(configSection, current);
-            BukkitLogger.info("Config {} has been updated to Version {}.", name,  current);
+            BukkitLogger.info("Config {} has been updated to Version {}.", name, current);
             return 1;
         }
 

@@ -1,6 +1,5 @@
 package dev.spoocy.adapter.message.serialization;
 
-import dev.spoocy.adapter.core.config.PluginConfig;
 import dev.spoocy.adapter.message.Message;
 import dev.spoocy.adapter.message.MessageLike;
 import dev.spoocy.adapter.message.font.Font;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -31,10 +29,12 @@ import java.util.function.Function;
 
 public class PluginMessageStyleRendererImpl implements PluginMessageStyleRenderer {
 
+    private final FontRegistry fonts;
     private final ComponentLineWrapper wrapper;
 
-    public PluginMessageStyleRendererImpl(@NotNull ComponentLineWrapper wrapper) {
-        this.wrapper = Args.notNull(wrapper, "wrapper");
+    public PluginMessageStyleRendererImpl(@NotNull FontRegistry fontRegistry) {
+        this.fonts = Args.notNull(fontRegistry, "fontRegistry");
+        this.wrapper = new ComponentLineWrapper(this.fonts);
     }
 
     @Override
@@ -148,8 +148,7 @@ public class PluginMessageStyleRendererImpl implements PluginMessageStyleRendere
         Key fontKey = style.font();
 
         if (fontKey != null) {
-            FontRegistry registry = PluginConfig.fonts();
-            Font font = registry.getFont(fontKey);
+            Font font = this.fonts.getFont(fontKey);
 
             if (font == null) {
                 throw new IllegalArgumentException("Font does not exist: " + fontKey);
@@ -180,27 +179,25 @@ public class PluginMessageStyleRendererImpl implements PluginMessageStyleRendere
 
     static final class BuilderImpl implements Builder {
 
-        private Consumer<String> logger;
-        private ComponentLineWrapper lineWrapper;
+        private FontRegistry fonts;
 
         BuilderImpl() {
-            this.lineWrapper = null;
+            this.fonts = null;
         }
 
         BuilderImpl(@NotNull PluginMessageStyleRendererImpl serializer) {
-            this.lineWrapper = serializer.wrapper;
+            this.fonts = serializer.fonts;
         }
 
         @Override
-        public Builder wrapper(@NotNull ComponentLineWrapper wrapper) {
-            Args.notNull(wrapper, "wrapper");
-            this.lineWrapper = wrapper;
+        public Builder fonts(@NotNull FontRegistry fontRegistry) {
+            this.fonts = Args.notNull(fontRegistry, "fontRegistry");
             return this;
         }
 
         @Override
         public @NotNull PluginMessageStyleRenderer build() {
-            return new PluginMessageStyleRendererImpl(this.lineWrapper);
+            return new PluginMessageStyleRendererImpl(this.fonts);
         }
     }
 

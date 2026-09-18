@@ -1,6 +1,6 @@
 package dev.spoocy.adapter.message;
 
-import dev.spoocy.adapter.core.config.PluginConfig;
+import dev.spoocy.adapter.core.PluginAdapter;
 import dev.spoocy.adapter.language.Translation;
 import dev.spoocy.adapter.message.serialization.PluginMessageStyleRenderer;
 import dev.spoocy.adapter.message.serialization.RenderContext;
@@ -40,7 +40,7 @@ public interface GlobalTranslation extends Translation {
 
     @NotNull
     static GlobalTranslation instance() {
-        return PluginConfig.globalTranslation();
+        return PluginAdapter.getInstance().getGlobalTranslation();
     }
 
 

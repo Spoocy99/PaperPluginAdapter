@@ -2,7 +2,6 @@ package dev.spoocy.adapter.event;
 
 import dev.spoocy.adapter.core.PluginAdapter;
 import dev.spoocy.adapter.log.BukkitLogger;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
@@ -94,7 +93,7 @@ public interface ListenAdapter extends Listener {
         abstract void onEvent(T event);
 
         public void register() {
-            Bukkit.getPluginManager().registerEvent(eventClass, listener, priority, (listener, event) -> {
+            PluginAdapter.getInstance().registerListener(eventClass, listener, priority, (listener, event) -> {
 
                 if(!eventClass.isAssignableFrom(event.getClass())) {
                     BukkitLogger.warn("PluginManager published non assignable event to listener: " + eventClass.getName() + " <-/- " + event.getClass().getName());
@@ -102,7 +101,7 @@ public interface ListenAdapter extends Listener {
                 }
 
                 onEvent((T) event);
-            }, PluginAdapter.getInstance(), ignoreCancelled);
+            }, ignoreCancelled);
         }
 
     }
