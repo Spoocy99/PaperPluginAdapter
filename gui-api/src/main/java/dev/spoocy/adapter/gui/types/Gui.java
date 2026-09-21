@@ -101,6 +101,7 @@ public interface Gui {
 
     int getHeight();
 
+    @Nullable
     Item getBackground();
 
     void setFrozen(boolean frozen);
@@ -161,10 +162,13 @@ public interface Gui {
         return handleClick(x, y, event.getClick(), event.getAction(), (Player) event.getWhoClicked(), executor);
     }
 
+    @NotNull
     Coordinate[] retrieveCoordinates(@NotNull Item item);
 
+    @NotNull
     Collection<GuiChangeSubscriber> getSubscribers();
 
+    @NotNull
     Collection<Item> retrieveAllPresentItems();
 
     boolean isAnimationPlaying();

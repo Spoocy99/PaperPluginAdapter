@@ -7,13 +7,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -130,4 +130,10 @@ public interface CustomInventory extends InventoryHolder {
 
     @ApiStatus.Internal
     void handle(@NotNull InventoryMoveItemEvent event);
+
+    default boolean isThis(@NotNull Inventory inventory) {
+        InventoryHolder holder = inventory.getHolder();
+        return holder != null && holder.equals(this);
+    }
+
 }

@@ -1,7 +1,7 @@
 package dev.spoocy.adapter.gui.layout.slot;
 
 import dev.spoocy.adapter.gui.items.Item;
-import dev.spoocy.adapter.gui.items.types.GuiControlItem;
+import dev.spoocy.adapter.gui.items.types.AbstractAwareItem;
 import dev.spoocy.adapter.gui.types.Gui;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -78,8 +78,8 @@ public class SlotImpl implements Slot {
             this.allowedActions = item.getAllowedActions();
             this.allowedClickTypes = item.getAllowedClickTypes();
 
-            if(item instanceof GuiControlItem<?>) {
-                ((GuiControlItem) item).setGui(this.parent);
+            if(item instanceof AbstractAwareItem<?>) {
+                ((AbstractAwareItem) item).setGui(this.parent);
             }
         }
 

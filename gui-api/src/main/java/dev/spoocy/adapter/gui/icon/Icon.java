@@ -1,19 +1,17 @@
 package dev.spoocy.adapter.gui.icon;
 
-import dev.spoocy.adapter.compatibility.items.BukkitCompatibility;
-import dev.spoocy.adapter.inventory.InventoryManager;
 import dev.spoocy.adapter.message.LocalizedComponent;
-import dev.spoocy.utils.common.collections.Collector;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
-import javax.annotation.Nonnegative;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * @author Spoocy99 | GitHub: Spoocy99
@@ -21,148 +19,69 @@ import java.util.Locale;
 
 public interface Icon {
 
-    Icon EMPTY = new Empty();
+    Icon EMPTY = EmptyIcon.INSTANCE;
 
     @Contract("_ -> new")
     static @NotNull Icon of(@NotNull Material material) {
-        return new Builder(material);
+        return new IconImpl(material);
     }
 
     @Contract("_ -> new")
     static @NotNull Icon of(@NotNull ItemStack itemStack) {
-        return new Builder(itemStack);
+        return new IconImpl(itemStack);
     }
 
-    Icon name(@NotNull LocalizedComponent name);
+    @Contract("_ -> new")
+    static @NotNull Icon of(@NotNull Supplier<ItemStack> supplier) {
+        return new IconImpl(supplier);
+    }
 
-    Icon lore(@NotNull LocalizedComponent... lines);
+    Icon title(@NotNull Consumer<Title> title);
 
-    Icon lore(@NotNull List<LocalizedComponent> lines);
+    Icon title(@NotNull LocalizedComponent title);
 
-    Icon addLore(@NotNull LocalizedComponent line);
+    Icon description(@NotNull Consumer<Description> description);
 
-    Icon amount(@Nonnegative int amount);
+    Icon description(@NotNull List<LocalizedComponent> description);
+
+    default Icon description(@NotNull LocalizedComponent... descriptions) {
+        return description(List.of(descriptions));
+    }
+
+    Icon amount(@Range(from = 1, to = 64) int amount);
 
     Icon glowing();
 
     ItemStack decode(@NotNull Locale localization);
 
-    class Empty implements Icon {
+    /**
+     * Title for the display
+     */
+    interface Title {
 
-        private Empty() { }
+        void set(@NotNull LocalizedComponent title);
 
-        @Override
-        public Icon name(@NotNull LocalizedComponent name) {
-            return this;
+        default void set(@NotNull Component title) {
+            set(LocalizedComponent.of(title));
         }
 
-        @Override
-        public Icon lore(@NotNull LocalizedComponent... lines) {
-            return this;
-        }
-
-        @Override
-        public Icon lore(@NotNull List<LocalizedComponent> lines) {
-            return this;
-        }
-
-        @Override
-        public Icon addLore(@NotNull LocalizedComponent line) {
-            return this;
-        }
-
-        @Override
-        public Icon amount(int amount) {
-            return this;
-        }
-
-        @Override
-        public Icon glowing() {
-            return this;
-        }
-
-        @Override
-        public ItemStack decode(@NotNull Locale localization) {
-            return InventoryManager.INSTANCE
-                    .getFactory()
-                    .itemBuilder(Material.PAPER)
-                    .displayName(Component.text("Empty Icon"))
-                    .build()
-                    ;
-        }
     }
 
-    class Builder implements Icon {
+    /**
+     * Description for the display
+     */
+    interface Description {
 
-        private final ItemStack item;
-        private LocalizedComponent name = LocalizedComponent.EMPTY;
-        private List<LocalizedComponent> lore = new LinkedList<>();
-        private int amount = 1;
-        private boolean glowing = false;
+        Description line(@NotNull LocalizedComponent line);
 
-        public Builder(@NotNull Material material) {
-            this.item = new ItemStack(material);
+        default Description line(@NotNull Component component) {
+            return line(LocalizedComponent.of(component));
         }
 
-        public Builder(@NotNull ItemStack itemStack) {
-            this.item = itemStack;
+        default Description empty() {
+            return line(Component.empty());
         }
 
-        @Override
-        public Icon name(@NotNull LocalizedComponent name) {
-            this.name = name;
-            return this;
-        }
-
-        @Override
-        public Icon lore(@NotNull LocalizedComponent... lines) {
-            this.lore = Collector.of(lines).asList();
-            return this;
-        }
-
-        @Override
-        public Icon lore(@NotNull List<LocalizedComponent> lines) {
-            this.lore = lines;
-            return this;
-        }
-
-        @Override
-        public Icon addLore(@NotNull LocalizedComponent line) {
-            this.lore.add(line);
-            return this;
-        }
-
-        @Override
-        public Icon amount(@Nonnegative int amount) {
-            this.amount = amount;
-            return this;
-        }
-
-        @Override
-        public Icon glowing() {
-            this.glowing = true;
-            return this;
-        }
-
-        @Override
-        public ItemStack decode(@NotNull Locale locale) {
-            List<Component> cmplore = new LinkedList<>();
-
-            for(LocalizedComponent line : this.lore) {
-                cmplore.addAll(line.cmpLines(locale));
-            }
-
-            return InventoryManager.INSTANCE
-                    .getFactory()
-                    .itemBuilder(this.item)
-                    .displayName(this.name.cmp(locale))
-                    .clearLore()
-                    .lore(cmplore)
-                    .amount(this.amount)
-                    .computeIf(i -> this.glowing, i -> i.addEnchantment(BukkitCompatibility.unbreakingEnchantment(), 1))
-                    .hideAttributes()
-                    .build();
-        }
     }
 
 }

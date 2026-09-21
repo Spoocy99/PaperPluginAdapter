@@ -29,12 +29,12 @@ public abstract class PlayerViewProvider<V extends GuiView> implements ViewProvi
     }
 
     @Override
-    public V getOrCreate(@NotNull Player key) {
+    public @NotNull V getOrCreate(@NotNull Player key) {
         return this.data.computeIfAbsent(key, this::createView);
     }
 
     @Override
-    public V open(@NotNull Player key) {
+    public @NotNull V open(@NotNull Player key) {
         V view = this.getOrCreate(key);
         view.open();
         return view;
@@ -46,12 +46,12 @@ public abstract class PlayerViewProvider<V extends GuiView> implements ViewProvi
     }
 
     @Override
-    public Collection<V> all() {
+    public @NotNull Collection<V> all() {
         return ImmutableList.copyOf(data.values());
     }
 
     @Override
-    public Collection<V> all(@NotNull Predicate<V> filter) {
+    public @NotNull Collection<V> all(@NotNull Predicate<V> filter) {
         return Collector.of(this.data.values())
                 .filter(filter)
                 .asImmutableList();

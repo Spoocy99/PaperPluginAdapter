@@ -3,6 +3,7 @@ package dev.spoocy.adapter.inventory.impl;
 import dev.spoocy.adapter.inventory.AbstractBukkitInventory;
 import dev.spoocy.adapter.inventory.InventoryManager;
 import net.kyori.adventure.text.Component;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -11,30 +12,28 @@ import org.jetbrains.annotations.NotNull;
  * @author Spoocy99 | GitHub: Spoocy99
  */
 
-public class ChestInventoryImpl extends AbstractBukkitInventory {
+public class AnvilInventoryImpl extends AbstractBukkitInventory {
 
     @Contract("_, _ -> new")
-    public static @NotNull ChestInventoryImpl create(
-            @NotNull Component title,
-            int rows
-    ) {
-        return new ChestInventoryImpl(title, rows, true);
+    public static @NotNull AnvilInventoryImpl create(@NotNull Component title, boolean listening) {
+        return new AnvilInventoryImpl(title, listening);
     }
 
-    private ChestInventoryImpl(@NotNull Component title, int rows, boolean register) {
-        super(title, rows * 9, register);
+    public AnvilInventoryImpl(@NotNull Component title, boolean listening) {
+        super(title, 3, listening);
     }
 
     @Override
     protected @NotNull Inventory createInventory(int size, @NotNull Component title) {
-        return InventoryManager.INSTANCE.getFactory().createInventory(this, size, title);
+        return InventoryManager.INSTANCE.getFactory().createInventory(this, InventoryType.ANVIL, title);
     }
 
     @Override
     public String toString() {
-        return "ChestInventoryImpl{" +
+        return "AnvilInventoryImpl{" +
                 ", listening=" + listening +
                 ", inventory=" + inventory +
                 '}';
     }
+
 }

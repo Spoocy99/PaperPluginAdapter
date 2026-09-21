@@ -59,7 +59,7 @@ public abstract class GuiItem implements Item {
     @Override
     public void updateViews() {
         for (GuiView gui : this.getViews()) {
-            gui.redraw(this);
+            gui.notifyChanges(this);
         }
         //BukkitLogger.trace("Updated item in {} views", this.getViews().size());
     }

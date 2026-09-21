@@ -1,5 +1,6 @@
 package dev.spoocy.adapter.gui.items.types;
 
+import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.layout.slot.Slot;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -11,11 +12,6 @@ import org.bukkit.event.inventory.InventoryAction;
 public abstract class GuiButton extends GuiItem {
 
     @Override
-    public boolean isButton() {
-        return true;
-    }
-
-    @Override
     public InventoryAction[] getAllowedActions() {
         return Slot.NO_ACTIONS;
     }
@@ -23,5 +19,10 @@ public abstract class GuiButton extends GuiItem {
     @Override
     public ClickType[] getAllowedClickTypes() {
         return Slot.NO_CLICK_TYPES;
+    }
+
+    @Override
+    public int getUpdateTick() {
+        return Item.NO_UPDATE;
     }
 }

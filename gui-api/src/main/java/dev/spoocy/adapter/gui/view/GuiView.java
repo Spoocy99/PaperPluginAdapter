@@ -9,8 +9,8 @@ import dev.spoocy.adapter.gui.view.impl.NormalViewImpl;
 import dev.spoocy.adapter.message.LocalizedComponent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,27 +25,48 @@ import java.util.function.Function;
 
 public interface GuiView extends GuiChangeSubscriber {
 
-    static NormalBuilder normal() {
+    @Contract(" -> new")
+    static @NotNull NormalView.Builder normal() {
         return new NormalViewImpl.Builder();
     }
 
-    static DropperBuilder dropper() {
-        return new DropperViewImpl.Builder();
+    @Contract(value = " -> new", pure = true)
+    static @NotNull DropperView.Builder dropper() {
+        return new DropperViewImpl.BuilderImpl();
     }
 
+    /**
+     * @return the {@link Player Viewer} for this view
+     */
     @NotNull
     Player getViewer();
 
+    /**
+     * @return whether this view is open
+     */
     boolean isOpen();
 
+    /**
+     * Opens this view for the {@link Player Viewer}.
+     */
     void open();
 
+    /**
+     * Closes this view for the {@link Player Viewer}.
+     */
     default void close() {
         close(InventoryCloseReason.EXIT);
     }
 
+    @ApiStatus.Internal
     void close(@NotNull InventoryCloseReason reason);
 
+    /**
+     * @return the view to open when exiting this view
+     *
+     * @see #setExitView(Function)
+     * @see #exit()
+     */
     @Nullable
     GuiView getExitView();
 
@@ -56,11 +77,22 @@ public interface GuiView extends GuiChangeSubscriber {
      */
     void setExitView(@Nullable Function<GuiView, GuiView> view);
 
+    /**
+     * Exits this view by closing it and opening the view returned by {@link #getExitView()}.
+     *
+     * @return the view that was opened
+     */
     GuiView exit();
 
+    /**
+     * @return the title of this view
+     */
     @NotNull
     LocalizedComponent getTitle();
 
+    /**
+     * @return the {@link Locale language} of the view
+     */
     Locale getLocale();
 
     /**
@@ -75,12 +107,30 @@ public interface GuiView extends GuiChangeSubscriber {
      */
     void setPlayerLocale();
 
+    /**
+     * @return {@code true} if this view can be closed, {@code false} otherwise.
+     */
     boolean isCloseable();
 
+    /**
+     * Sets whether this view can be closed by the player.
+     *
+     * @param closeable {@code true} if the view should be closeable, {@code false} otherwise
+     */
     void setCloseable(boolean closeable);
 
+    /**
+     * If the displayed gui should be reset when this view is closed.
+     *
+     * @return {@code true} if the gui will be reset, {@code false} otherwise.
+     */
     boolean isResetOnClose();
 
+    /**
+     * If the displayed gui should be reset when this view is switched from to another view.
+     *
+     * @return {@code true} if the gui will be reset, {@code false} otherwise.
+     */
     boolean isResetOnSwitch();
 
     /**
@@ -91,37 +141,41 @@ public interface GuiView extends GuiChangeSubscriber {
      */
     void setResetWhen(boolean onClose, boolean onSwitch);
 
+    /**
+     * Resets the displayed gui.
+     */
     void resetDisplayedGui();
 
+    /**
+     * Gets the {@link Gui} at a certain position.
+     *
+     * @param x the x position of the gui
+     * @param y the y position of the gui
+     *
+     * @return the gui at the given position or {@code null} if no gui is at the given position
+     */
+    @Nullable
+    Gui getGuiAt(int x, int y);
+
+    /**
+     * Notifies this view that an item has changed and should be redrawn.
+     *
+     * @param item the item to redraw
+     */
+    void notifyChanges(@NotNull Item item);
+
+    /**
+     * Manually Redraws the entire view.
+     */
     void redraw();
 
-    void redraw(@NotNull Item item);
-
+    /**
+     * Manually redraws the {@link Item} at a certain position
+     *
+     * @param x the x position of the item
+     * @param y the y position of the item
+     */
     void redraw(int x, int y);
-
-    void onOpen(@NotNull Runnable runnable);
-
-    void onClose(@NotNull Runnable runnable);
-
-    @ApiStatus.Internal
-    void simulateClick(@NotNull InventoryClickEvent event);
-
-    interface SingleGuiView extends GuiView {
-
-        @NotNull
-        Gui getDisplayedGui();
-
-        void setGui(@NotNull Gui gui);
-
-    }
-
-    interface NormalView extends SingleGuiView {
-
-    }
-
-    interface DropperView extends SingleGuiView {
-
-    }
 
     interface Builder<B extends Builder<B, G>, G extends GuiView> {
 
@@ -199,10 +253,6 @@ public interface GuiView extends GuiChangeSubscriber {
          */
         B exit(@NotNull Function<GuiView, GuiView> view);
 
-        B onOpenAction(@NotNull Runnable runnable);
-
-        B onCloseAction(@NotNull Runnable runnable);
-
         @NotNull
         G build(@NotNull Player viewer);
 
@@ -214,18 +264,5 @@ public interface GuiView extends GuiChangeSubscriber {
         }
     }
 
-    interface SingleGuiBuilder<B extends SingleGuiBuilder<B, G>, G extends SingleGuiView> extends Builder<B, G> {
-
-        B gui(@NotNull Gui gui);
-
-    }
-
-    interface NormalBuilder extends SingleGuiBuilder<NormalBuilder, NormalView> {
-
-    }
-
-    interface DropperBuilder extends SingleGuiBuilder<DropperBuilder, DropperView> {
-
-    }
 
 }

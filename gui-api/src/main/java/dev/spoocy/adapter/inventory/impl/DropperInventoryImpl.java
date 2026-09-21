@@ -5,6 +5,7 @@ import dev.spoocy.adapter.inventory.InventoryManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class DropperInventoryImpl extends AbstractBukkitInventory {
 
-    public static DropperInventoryImpl create(@NotNull Component title) {
+    @Contract("_ -> new")
+    public static @NotNull DropperInventoryImpl create(@NotNull Component title) {
         return new DropperInventoryImpl(title, true);
     }
 

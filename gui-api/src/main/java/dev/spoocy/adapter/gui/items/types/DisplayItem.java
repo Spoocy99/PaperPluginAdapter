@@ -2,6 +2,7 @@ package dev.spoocy.adapter.gui.items.types;
 
 import dev.spoocy.adapter.gui.click.Click;
 import dev.spoocy.adapter.gui.icon.Icon;
+import dev.spoocy.adapter.gui.items.Item;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +14,7 @@ import java.util.Locale;
  * @author Spoocy99 | GitHub: Spoocy99
  */
 
-public class DisplayItem extends GuiButton {
+public class DisplayItem extends GuiItem {
 
     private final Icon icon;
 
@@ -37,6 +38,11 @@ public class DisplayItem extends GuiButton {
     @Override
     public ClickType[] getAllowedClickTypes() {
         return new ClickType[0];
+    }
+
+    @Override
+    public int getUpdateTick() {
+        return Item.NO_UPDATE;
     }
 
     @Override

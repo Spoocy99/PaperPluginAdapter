@@ -12,12 +12,16 @@ import java.util.function.Predicate;
 
 public interface ViewProvider<K, V extends GuiView> {
 
+    @NotNull
     V getOrCreate(@NotNull K key);
 
+    @NotNull
     V open(@NotNull K key);
 
+    @NotNull
     Collection<V> all();
 
+    @NotNull
     Collection<V> all(@NotNull Predicate<V> filter);
 
     void clearCache();

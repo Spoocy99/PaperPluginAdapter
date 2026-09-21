@@ -766,6 +766,12 @@ public interface ItemBuilder extends Cloneable {
     );
 
     /**
+     * Applies the built meta to the {@link ItemStack}.
+     */
+    @Contract(mutates = "param1")
+    void apply(@NotNull ItemStack item);
+
+    /**
      * Builds the item and returns the ItemStack.
      *
      * @return The built ItemStack.

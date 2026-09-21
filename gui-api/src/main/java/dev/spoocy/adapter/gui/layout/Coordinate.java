@@ -1,5 +1,8 @@
 package dev.spoocy.adapter.gui.layout;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -8,7 +11,10 @@ import java.util.Objects;
 
 public class Coordinate {
 
-    public static Coordinate of(int x, int y) {
+    public static Coordinate UNKNOWN = Coordinate.of(-1, -1);
+
+    @Contract(value = "_, _ -> new", pure = true)
+    public static @NotNull Coordinate of(int x, int y) {
         return new Coordinate(x, y);
     }
 

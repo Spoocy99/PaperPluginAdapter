@@ -1,7 +1,10 @@
-package dev.spoocy.adapter.gui.view;
+package dev.spoocy.adapter.gui.view.impl;
 
 import dev.spoocy.adapter.gui.items.Item;
 import dev.spoocy.adapter.gui.saveable.ViewProvider;
+import dev.spoocy.adapter.gui.view.GuiView;
+import dev.spoocy.adapter.gui.view.InventoryCloseReason;
+import dev.spoocy.adapter.gui.view.InventoryViewTask;
 import dev.spoocy.adapter.inventory.InventoryManager;
 import dev.spoocy.adapter.language.Localization;
 import dev.spoocy.adapter.log.BukkitLogger;
@@ -21,7 +24,9 @@ import java.util.function.Function;
 
 public abstract class AbstractGuiView implements GuiView {
 
+    protected final InventoryViewTask task = new InventoryViewTask(this::onTick);
     protected final Player viewer;
+
     protected Locale locale;
     protected boolean closeable;
     protected LocalizedComponent title;
@@ -47,6 +52,7 @@ public abstract class AbstractGuiView implements GuiView {
         this.shouldHandleClose = true;
         this.currentlyOpen = false;
         this.exitView = v -> null;
+
     }
 
     @Override
@@ -71,35 +77,55 @@ public abstract class AbstractGuiView implements GuiView {
 
     @Override
     public void open() {
-        BukkitLogger.trace("Opening view {} for player {} (currently open: {})", this.getClass().getSimpleName(), this.viewer.getName(), this.isOpen());
-        if(this.isOpen()) return;
+        if (this.isOpen()) return;
+
+        BukkitLogger.trace(
+                "Opening view {} for player {} (currently open: {})",
+                this.getClass().getSimpleName(),
+                this.viewer.getName(),
+                this.isOpen()
+        );
+
+        // start updater task
+        this.task.start();
 
         GuiView currentlyOpen = InventoryManager.INSTANCE.getCurrentlyOpen(this.viewer);
-        if(currentlyOpen != null) {
+        if (currentlyOpen != null) {
             currentlyOpen.close(InventoryCloseReason.REPLACED);
         }
 
         this.currentlyOpen = true;
         InventoryManager.INSTANCE.markOpen(this);
-        openView();
+        openView0();
     }
-    protected abstract void openView();
+
+    protected abstract void openView0();
 
     @Override
     public void close(@NotNull InventoryCloseReason reason) {
-        BukkitLogger.trace("Closing view {} for player {} with {} (currently open: {})", this.getClass().getSimpleName(), this.viewer.getName(), reason, this.isOpen());
-        if(!this.isOpen()) return;
+        BukkitLogger.trace(
+                "Closing view {} for player {} with {} (currently open: {})",
+                this.getClass().getSimpleName(),
+                this.viewer.getName(),
+                reason,
+                this.isOpen()
+        );
+        if (!this.isOpen()) return;
         this.currentlyOpen = false;
         this.shouldHandleClose = false;
 
-        if(reason == InventoryCloseReason.REPLACED) {
+        // stop updater task
+        this.task.stop();
+
+        if (reason == InventoryCloseReason.REPLACED) {
             return;
         }
 
         InventoryManager.INSTANCE.markClosed(this.viewer);
-        this.closeView();
+        this.closeView0();
     }
-    protected abstract void closeView();
+
+    protected abstract void closeView0();
 
     @Override
     public @Nullable GuiView getExitView() {
@@ -116,7 +142,7 @@ public abstract class AbstractGuiView implements GuiView {
         GuiView exitView = this.getExitView();
         if (exitView != null) {
 
-            if(!exitView.getViewer().equals(this.viewer)) {
+            if (!exitView.getViewer().equals(this.viewer)) {
                 throw new IllegalStateException("Viewer of Exit View must be the same as Viewer of current view.");
             }
 
@@ -162,15 +188,14 @@ public abstract class AbstractGuiView implements GuiView {
     @Override
     public void setLocale(@NotNull Locale locale) {
         Args.notNull(locale, "locale");
-        if(this.locale == locale) return;
+        if (this.locale == locale) return;
         this.locale = locale;
-        updateLocale(locale);
+        this.redraw();
     }
-    protected abstract void updateLocale(@NotNull Locale  locale);
 
     @Override
     public void onUpdate(int x, int y, @Nullable Item item, @Nullable Item previousItem) {
-        if(item == previousItem) {
+        if (item == previousItem) {
             this.redraw(x, y);
             return;
         }
@@ -186,14 +211,15 @@ public abstract class AbstractGuiView implements GuiView {
         this.redraw(x, y);
     }
 
-    public abstract static class Builder<B extends GuiView.Builder<B, G>, G extends GuiView> implements GuiView.Builder<B, G> {
+    protected abstract void onTick(long current);
+
+    public abstract static class AbstractBuilder<B extends GuiView.Builder<B, G>, G extends GuiView> implements GuiView.Builder<B, G> {
 
         protected LocalizedComponent title;
         protected boolean closeable = true;
         protected boolean resetOnClose = false;
         protected boolean resetOnSwitch = false;
         protected Locale locale;
-        protected Runnable onClose, onOpen;
         protected Function<GuiView, GuiView> exitView;
 
         @Override
@@ -223,7 +249,7 @@ public abstract class AbstractGuiView implements GuiView {
 
         @Override
         public B exitView(@Nullable GuiView view) {
-            if(view == null) {
+            if (view == null) {
                 this.exitView = null;
                 return instance();
             }
@@ -232,7 +258,7 @@ public abstract class AbstractGuiView implements GuiView {
 
         @Override
         public B exit(@Nullable ViewProvider<Player, ?> viewProvider) {
-            if(viewProvider == null) {
+            if (viewProvider == null) {
                 this.exitView = null;
                 return instance();
             }
@@ -242,18 +268,6 @@ public abstract class AbstractGuiView implements GuiView {
         @Override
         public B exit(@NotNull Function<GuiView, GuiView> view) {
             this.exitView = view;
-            return instance();
-        }
-
-        @Override
-        public B onOpenAction(@NotNull Runnable runnable) {
-            this.onOpen = runnable;
-            return instance();
-        }
-
-        @Override
-        public B onCloseAction(@NotNull Runnable runnable) {
-            this.onClose = runnable;
             return instance();
         }
 
@@ -267,7 +281,7 @@ public abstract class AbstractGuiView implements GuiView {
         @Override
         public @NotNull G build(@NotNull Player viewer) {
 
-            if(this.locale == null) {
+            if (this.locale == null) {
                 this.locale = Localization.parseLocale(viewer);
             }
 
@@ -275,13 +289,6 @@ public abstract class AbstractGuiView implements GuiView {
             G view = createGuiView(viewer);
             view.setExitView(this.exitView);
             view.setResetWhen(this.resetOnClose, this.resetOnSwitch);
-
-            if (this.onOpen != null) {
-                view.onOpen(this.onOpen);
-            }
-            if (this.onClose != null) {
-                view.onClose(this.onClose);
-            }
 
             return view;
         }

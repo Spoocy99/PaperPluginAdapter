@@ -101,11 +101,20 @@ public abstract class AbstractItemBuilder implements ItemBuilder {
     }
 
     @Override
-    public @NotNull ItemStack build() {
-        ItemStack item = this.base.clone();
+    public void apply(@NotNull ItemStack item) {
+        if(item.getType() != this.base.getType()) {
+            item.setType(this.base.getType());
+        }
+
         item.setAmount(this.amount);
         item.setItemMeta(this.meta);
-        return item;
+    }
+
+    @Override
+    public @NotNull ItemStack build() {
+        this.base.setAmount(this.amount);
+        this.base.setItemMeta(this.meta);
+        return this.base;
     }
 
     @Override

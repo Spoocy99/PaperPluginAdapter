@@ -2,14 +2,14 @@ package dev.spoocy.adapter.gui.implementations;
 
 import dev.spoocy.adapter.gui.click.Click;
 import dev.spoocy.adapter.gui.click.ClickImpl;
-import dev.spoocy.adapter.gui.items.PredicateItem;
-import dev.spoocy.adapter.gui.items.types.GuiControlItem;
 import dev.spoocy.adapter.gui.items.Item;
+import dev.spoocy.adapter.gui.items.PredicateItem;
+import dev.spoocy.adapter.gui.items.types.AbstractAwareItem;
 import dev.spoocy.adapter.gui.layout.Coordinate;
 import dev.spoocy.adapter.gui.layout.builder.CharLayout;
-import dev.spoocy.adapter.gui.layout.slot.SlotMarker;
 import dev.spoocy.adapter.gui.layout.builder.Layout;
 import dev.spoocy.adapter.gui.layout.slot.Slot;
+import dev.spoocy.adapter.gui.layout.slot.SlotMarker;
 import dev.spoocy.adapter.gui.types.Gui;
 import dev.spoocy.adapter.gui.view.GuiView;
 import dev.spoocy.adapter.log.BukkitLogger;
@@ -210,7 +210,7 @@ public abstract class MatrixGui extends AbstractGui {
     }
 
     @Override
-    public Coordinate[] retrieveCoordinates(@NotNull Item item) {
+    public @NotNull Coordinate[] retrieveCoordinates(@NotNull Item item) {
         List<Coordinate> coordinates = new ArrayList<>();
         for (int x = 0; x < this.width; x++) {
             for (int y = 0; y < this.height; y++) {
@@ -226,7 +226,7 @@ public abstract class MatrixGui extends AbstractGui {
     }
 
     @Override
-    public Collection<Item> retrieveAllPresentItems() {
+    public @NotNull Collection<Item> retrieveAllPresentItems() {
         Set<Item> items = new HashSet<>();
         for (int x = 0; x < this.width; x++) {
             for (int y = 0; y < this.height; y++) {
@@ -241,7 +241,7 @@ public abstract class MatrixGui extends AbstractGui {
 
     protected void updateControlItemsInViews() {
         this.retrieveAllPresentItems().forEach(item -> {
-            if (item instanceof GuiControlItem) {
+            if (item instanceof AbstractAwareItem) {
                 item.updateViews();
             }
         });

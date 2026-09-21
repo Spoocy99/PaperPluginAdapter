@@ -7,6 +7,7 @@ import dev.spoocy.adapter.gui.saveable.DefaultViewProvider;
 import dev.spoocy.adapter.gui.saveable.ViewProvider;
 import dev.spoocy.adapter.gui.types.Gui;
 import dev.spoocy.adapter.gui.view.GuiView;
+import dev.spoocy.adapter.gui.view.NormalView;
 import dev.spoocy.utils.common.collections.Collector;
 import dev.spoocy.utils.common.misc.Args;
 import org.bukkit.NamespacedKey;
@@ -70,7 +71,7 @@ public abstract class AbstractGui implements Gui {
     }
 
     @Override
-    public Set<GuiChangeSubscriber> getSubscribers() {
+    public @NotNull Set<GuiChangeSubscriber> getSubscribers() {
         return Collections.unmodifiableSet(this.subscribers);
     }
 
@@ -153,29 +154,29 @@ public abstract class AbstractGui implements Gui {
             return gui;
         }
 
-        public GuiView.NormalBuilder normalView() {
+        public NormalView.Builder normalView() {
             return GuiView.normal().gui(build());
         }
 
-        public ViewProvider<Player, GuiView.NormalView> normalViews(@NotNull BiConsumer<Player, GuiView.NormalBuilder> builder) {
+        public ViewProvider<Player, NormalView> normalViews(@NotNull BiConsumer<Player, NormalView.Builder> builder) {
             return normalViews(builder, false, true);
         }
 
-        public ViewProvider<Player, GuiView.NormalView> normalViews(@NotNull BiConsumer<Player, GuiView.NormalBuilder> builder, boolean clearOnDisconnect) {
+        public ViewProvider<Player, NormalView> normalViews(@NotNull BiConsumer<Player, NormalView.Builder> builder, boolean clearOnDisconnect) {
             return normalViews(builder, false, clearOnDisconnect);
         }
 
-        public ViewProvider<Player, GuiView.NormalView> normalViews(@NotNull BiConsumer<Player, GuiView.NormalBuilder> builder, boolean shared, boolean clearOnDisconnect) {
+        public ViewProvider<Player, NormalView> normalViews(@NotNull BiConsumer<Player, NormalView.Builder> builder, boolean shared, boolean clearOnDisconnect) {
             if(shared) {
                 Gui gui = build();
                 return new DefaultViewProvider<>(player -> {
-                    GuiView.NormalBuilder viewBuilder = GuiView.normal().gui(gui);
+                    NormalView.Builder viewBuilder = GuiView.normal().gui(gui);
                     builder.accept(player, viewBuilder);
                     return viewBuilder.build(player);
                 }, clearOnDisconnect);
             } else {
                 return new DefaultViewProvider<>(player -> {
-                    GuiView.NormalBuilder viewBuilder = GuiView.normal().gui(build());
+                    NormalView.Builder viewBuilder = GuiView.normal().gui(build());
                     builder.accept(player, viewBuilder);
                     return viewBuilder.build(player);
                 }, clearOnDisconnect);
