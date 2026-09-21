@@ -72,6 +72,37 @@ public enum Head {
      * <img src="http://textures.minecraft.net/texture/8d44756e0b4ece8d746296a3d5e297e1415f4ba17647ffe228385383d161a9" />
      */
     VAMPIRE("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGQ0NDc1NmUwYjRlY2U4ZDc0NjI5NmEzZDVlMjk3ZTE0MTVmNGJhMTc2NDdmZmUyMjgzODUzODNkMTYxYTkifX19"),
+
+    /**
+     * <img src="http://textures.minecraft.net/texture/50350b3a49049e4f257ccd2d9f4b8fa86c13e56be5d115c5f160a398627d1813" />
+     */
+    COMPUTER_OFF("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTAzNTBiM2E0OTA0OWU0ZjI1N2NjZDJkOWY0YjhmYTg2YzEzZTU2YmU1ZDExNWM1ZjE2MGEzOTg2MjdkMTgxMyJ9fX0="),
+
+    /**
+     * <img src="http://textures.minecraft.net/texture/5b8c63208e7d9cb9904920516a81df6e35ffa2269ce01c625d11a9a381ed93a" />
+     */
+    COMPUTER_ICONS("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWI4YzYzMjA4ZTdkOWNiOTkwNDkyMDUxNmE4MWRmNmUzNWZmYTIyNjljZTAxYzYyNWQxMWE5YTM4MWVkOTNhIn19fQ=="),
+
+    /**
+     * <img src="http://textures.minecraft.net/texture/c8fc17dd0a7f4b9f6c88748ef9ed11bd2cc489b89678f3bbcafcc145af0d16ce" />
+     */
+    COMPUTER_GREEN_TEXT("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzhmYzE3ZGQwYTdmNGI5ZjZjODg3NDhlZjllZDExYmQyY2M0ODliODk2NzhmM2JiY2FmY2MxNDVhZjBkMTZjZSJ9fX0="),
+
+    /**
+     * <img src="http://textures.minecraft.net/texture/ef30de7eea0a7db7d240094577f791bdee00babc2b6c0938be856c6a1fd758da" />
+     */
+    COMPUTER_BLACK_TEXT("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWYzMGRlN2VlYTBhN2RiN2QyNDAwOTQ1NzdmNzkxYmRlZTAwYmFiYzJiNmMwOTM4YmU4NTZjNmExZmQ3NThkYSJ9fX0="),
+
+     /**
+     * <img src="http://textures.minecraft.net/texture/c795a2f909912c519967f51fb61e4c8cc36e98349ff4b8ad2cfdf5523da31968" />
+     */
+    COMPUTER_BLACK_TEXT_2("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzc5NWEyZjkwOTkxMmM1MTk5NjdmNTFmYjYxZTRjOGNjMzZlOTgzNDlmZjRiOGFkMmNmZGY1NTIzZGEzMTk2OCJ9fX0="),
+
+    /**
+     * <img src="http://textures.minecraft.net/texture/65560d8442f571864cf652ee085afc1bfd1fec77bebb89214e0e6fc0139f3af0" />
+     */
+    COMPUTER_TABS("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjU1NjBkODQ0MmY1NzE4NjRjZjY1MmVlMDg1YWZjMWJmZDFmZWM3N2JlYmI4OTIxNGUwZTZmYzAxMzlmM2FmMCJ9fX0="),
+
     ;
 
     private final String texture;
