@@ -8,14 +8,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class UnresolvedDependencyException extends IllegalStateException {
 
-    private final String dependency;
-
-    public UnresolvedDependencyException(@NotNull String dependency) {
-        super("Dependency '" + dependency + "' is required but not present.");
-        this.dependency = dependency;
+    public UnresolvedDependencyException(@NotNull String message) {
+        super(message);
     }
 
-    public String getDependency() {
-        return this.dependency;
+    public UnresolvedDependencyException(@NotNull Throwable cause) {
+        super(cause);
+    }
+
+    public UnresolvedDependencyException(@NotNull String message, @NotNull Throwable cause) {
+        super(message, cause);
     }
 }

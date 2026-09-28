@@ -170,7 +170,7 @@ public class DefaultDependencyLoader implements DependencyLoader {
         this.plugins = new LinkedHashSet<>();
     }
 
-    private <T extends PluginDependency> void loadPlugin(@NotNull T dependency) {
+    private <T extends PluginDependency> void loadPlugin(@NotNull T dependency) throws UnresolvedDependencyException {
         long millis = System.currentTimeMillis();
 
         String pluginName = dependency.getName();
@@ -207,7 +207,7 @@ public class DefaultDependencyLoader implements DependencyLoader {
         );
     }
 
-    private void loadService(@NotNull Service service) {
+    private void loadService(@NotNull Service service) throws UnresolvedDependencyException {
         long millis = System.currentTimeMillis();
 
         List<Class<?>> shouldProvide = new ArrayList<>(service.provides());
