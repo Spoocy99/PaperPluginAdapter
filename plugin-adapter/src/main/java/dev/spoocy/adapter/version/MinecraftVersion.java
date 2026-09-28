@@ -17,7 +17,8 @@ import java.util.regex.Pattern;
 public class MinecraftVersion implements Version {
 
     public static final MinecraftVersion
-            LATEST = new MinecraftVersion("26.2"),
+            LATEST = new MinecraftVersion("26.3"),
+            V26_2 = new MinecraftVersion("26.2"),
             V26_1 = new MinecraftVersion("26.1"),
             V1_21_11 = new MinecraftVersion("1.21.11"),
             V1_21_10 = new MinecraftVersion("1.21.10"),
@@ -64,7 +65,7 @@ public class MinecraftVersion implements Version {
     private static MinecraftVersion CURRENT;
 
     public static MinecraftVersion getCurrent() {
-        if(CURRENT == null) {
+        if (CURRENT == null) {
             CURRENT = fromServer(Bukkit.getServer());
         }
         return CURRENT;
@@ -160,7 +161,7 @@ public class MinecraftVersion implements Version {
             return this.getMajor() == other.getMajor() &&
                     this.getMinor() == other.getMinor() &&
                     this.getBuild() == other.getBuild()
-            ;
+                    ;
         }
 
         return false;
