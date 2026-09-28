@@ -140,7 +140,7 @@ public class AwareGuiItem<G extends Gui> extends AbstractAwareItem<G> {
             TriConsumer<AwareItem, Click, G> clickHandler = this.action;
 
             if (this.updateOnTick) {
-                clickHandler = clickHandler.andThen((item, click, gui) -> item.updateViews());
+                clickHandler = clickHandler.andThen((item, click, gui) -> item.notifyChanges());
             }
 
             AwareGuiItem<G> item = new AwareGuiItem<>(

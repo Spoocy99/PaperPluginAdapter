@@ -160,6 +160,9 @@ public interface GuiView extends GuiChangeSubscriber {
     /**
      * Notifies this view that an item has changed and should be redrawn.
      *
+     * <p>
+     * This method is thread-safe as the actual update should happen on the view's thread
+     *
      * @param item the item to redraw
      */
     void notifyChanges(@NotNull Item item);

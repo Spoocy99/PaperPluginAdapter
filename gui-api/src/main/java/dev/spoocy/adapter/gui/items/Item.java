@@ -125,9 +125,12 @@ public interface Item {
     int getItemsInView(@NotNull GuiView view);
 
     /**
-     * Updates this item in all views it is displayed in
+     * Notifies all views this item is displayed in that the item has changed
+     *
+     * <p>
+     * This method is thread-safe as the actual update should happen on the view's thread
      */
-    void updateViews();
+    void notifyChanges();
 
     @ApiStatus.Internal
     void subscribe(@NotNull GuiView gui);

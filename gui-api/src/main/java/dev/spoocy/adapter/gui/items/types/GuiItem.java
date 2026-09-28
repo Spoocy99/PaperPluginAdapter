@@ -57,7 +57,7 @@ public abstract class GuiItem implements Item {
     }
 
     @Override
-    public void updateViews() {
+    public void notifyChanges() {
         for (GuiView gui : this.getViews()) {
             gui.notifyChanges(this);
         }

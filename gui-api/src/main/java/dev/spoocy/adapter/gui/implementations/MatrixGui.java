@@ -242,7 +242,7 @@ public abstract class MatrixGui extends AbstractGui {
     protected void updateControlItemsInViews() {
         this.retrieveAllPresentItems().forEach(item -> {
             if (item instanceof AbstractAwareItem) {
-                item.updateViews();
+                item.notifyChanges();
             }
         });
     }

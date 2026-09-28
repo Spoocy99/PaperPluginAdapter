@@ -141,7 +141,7 @@ public class BasicGuiItem extends GuiItem {
             BiConsumer<Item, Click> clickHandler = this.action;
 
             if (this.updateOnTick) {
-                clickHandler = clickHandler.andThen((item, click) -> item.updateViews());
+                clickHandler = clickHandler.andThen((item, click) -> item.notifyChanges());
             }
 
             BasicGuiItem item = new BasicGuiItem(
