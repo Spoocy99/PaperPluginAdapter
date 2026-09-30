@@ -36,22 +36,52 @@ public interface Icon {
         return new IconImpl(supplier);
     }
 
+    @Contract("_ -> this")
+    @NotNull
     Icon title(@NotNull Consumer<Title> title);
 
+    @Contract("_ -> this")
+    @NotNull
     Icon title(@NotNull LocalizedComponent title);
 
+    @Contract("_ -> this")
+    @NotNull
     Icon description(@NotNull Consumer<Description> description);
 
+    @Contract("_ -> this")
+    @NotNull
     Icon description(@NotNull List<LocalizedComponent> description);
 
+    @Contract("_ -> this")
+    @NotNull
     default Icon description(@NotNull LocalizedComponent... descriptions) {
         return description(List.of(descriptions));
     }
 
+    @Contract("_ -> this")
+    @NotNull
     Icon amount(@Range(from = 1, to = 64) int amount);
 
-    Icon glowing();
+    @Contract("_ -> this")
+    @NotNull
+    Icon amount(@NotNull Supplier<Integer> amount);
 
+    @Contract(" -> this")
+    @NotNull
+    default Icon glowing() {
+        return glowing(true);
+    }
+
+    @Contract("_ -> this")
+    @NotNull
+    Icon glowing(boolean glowing);
+
+    @Contract("_ -> this")
+    @NotNull
+    Icon glowingIf(@NotNull Supplier<Boolean> glowing);
+
+    @Contract("_ -> new")
+    @NotNull
     ItemStack decode(@NotNull Locale localization);
 
     /**

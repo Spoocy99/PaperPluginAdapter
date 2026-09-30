@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnegative;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -28,8 +27,9 @@ public class IconImpl implements Icon {
     private List<LocalizedComponent> description = List.of();
     private Consumer<Description> setDescription;
 
-    private int amount = 1;
-    private boolean glowing = false;
+    private Supplier<Integer> amount = () -> 1;
+
+    private Supplier<Boolean> glowing = () -> false;
 
     public IconImpl(@NotNull Material material) {
         this(new ItemStack(material));
@@ -44,48 +44,61 @@ public class IconImpl implements Icon {
     }
 
     @Override
-    public Icon title(@NotNull Consumer<Title> title) {
+    public @NotNull Icon title(@NotNull Consumer<Title> title) {
         this.title = null;
         this.setTitle = title;
         return this;
     }
 
     @Override
-    public Icon title(@NotNull LocalizedComponent title) {
+    public @NotNull Icon title(@NotNull LocalizedComponent title) {
         this.title = title;
         this.setTitle = null;
         return this;
     }
 
     @Override
-    public Icon description(@NotNull Consumer<Description> description) {
+    public @NotNull Icon description(@NotNull Consumer<Description> description) {
         this.description = null;
         this.setDescription = description;
         return this;
     }
 
     @Override
-    public Icon description(@NotNull List<LocalizedComponent> description) {
+    public @NotNull Icon description(@NotNull List<LocalizedComponent> description) {
         this.description = description;
         this.setDescription = null;
         return this;
     }
 
     @Override
-    public Icon amount(@Nonnegative int amount) {
+    public @NotNull Icon amount(final int amount) {
+        this.amount = () -> amount;
+        return this;
+    }
+
+    @Override
+    public @NotNull Icon amount(@NotNull Supplier<Integer> amount) {
         this.amount = amount;
         return this;
     }
 
     @Override
-    public Icon glowing() {
-        this.glowing = true;
+    public @NotNull Icon glowing(boolean glowing) {
+        this.glowing = glowing ? () -> true : () -> false;
         return this;
     }
 
+    @Override
+    public @NotNull Icon glowingIf(@NotNull Supplier<Boolean> glowing) {
+        this.glowing = glowing;
+        return this;
+    }
+
+    @NotNull
     private Component getName(@NotNull Locale locale) {
 
-        if(this.title != null) {
+        if (this.title != null) {
 
             return this.title.cmp(locale);
 
@@ -97,10 +110,11 @@ public class IconImpl implements Icon {
 
     }
 
+    @NotNull
     private List<Component> getLore(@NotNull Locale locale) {
         List<Component> list = new LinkedList<>();
 
-        if(this.description != null) {
+        if (this.description != null) {
 
             for (LocalizedComponent loc : this.description) {
                 list.addAll(loc.cmpLines(locale));
@@ -119,14 +133,14 @@ public class IconImpl implements Icon {
     }
 
     @Override
-    public ItemStack decode(@NotNull Locale locale) {
+    public @NotNull ItemStack decode(@NotNull Locale locale) {
         return InventoryManager.INSTANCE
                 .getFactory()
                 .itemBuilder(this.base.get())
                 .displayName(getName(locale))
                 .lore(getLore(locale))
-                .amount(this.amount)
-                .glow(this.glowing)
+                .amount(this.amount.get())
+                .glow(this.glowing.get())
                 .hideAttributes()
                 .build();
     }
